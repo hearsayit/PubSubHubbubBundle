@@ -26,5 +26,10 @@ namespace Hearsay\PubSubHubbubBundle\Topic;
  */
 interface TopicProviderInterface {
 
+    /**
+     * Get the topic associated with the given identifier.
+     * @param string $identifier The identifier.
+     * @return TopicInterface The topic.
+     */
     public function getTopic($identifier);
 }

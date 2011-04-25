@@ -19,10 +19,19 @@
 
 namespace Hearsay\PubSubHubbubBundle\Controller;
 
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+
 /**
  * Controller to handle requests from PubSubHubbub hubs.
  * @author Kevin Montag
  */
-class DefaultController {
-    
+class DefaultController extends Controller {
+
+    /**
+     * Primary callback action for interactions with hubs.
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function callbackAction($identifier) {
+        
+    }
 }

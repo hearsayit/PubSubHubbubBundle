@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the Hearsay PubSubHubbub bundle.
  *
@@ -26,7 +27,7 @@ namespace Hearsay\PubSubHubbubBundle\Topic;
 interface TopicInterface {
 
     /**
-     * Get the RSS or Atom URL for this object.
+     * Get the RSS or Atom URL for this topic.
      * @return string The URL.
      */
     public function getTopic();
@@ -38,4 +39,10 @@ interface TopicInterface {
      * verified.
      */
     public function getSecret();
+
+    /**
+     * Get a unique identifier which can be used to retrieve this topic.
+     * @return string A unique identifier.
+     */
+    public function getIdentifier();
 }

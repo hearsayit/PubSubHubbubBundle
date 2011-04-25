@@ -32,12 +32,29 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class HubSubscriber {
 
     /**
+     * @var UrlGeneratorInterface
+     */
+    private $generator;
+
+    /**
+     * Name of the route to use for callback URLs.
+     * @var string
+     */
+    private $callbackRoute;
+
+    /**
      * The URL of the hub we're subscribing/unsubscribing.
      * @var string
      */
     private $hubUrl;
 
-    public function __construct(UrlGeneratorInterface $generator, $hubUrl) {
+    /**
+     * Standard constructor.
+     * @param string $hubUrl The URL of the hub we're subscribing/unsubscribing.
+     * @param UrlGeneratorInterface $generator Helper to generate callback URLs.
+     * @param string $callbackRoute Name of the callback route.
+     */
+    public function __construct($hubUrl, UrlGeneratorInterface $generator, $callbackRoute = "pubsubhubbub") {
         
     }
 
@@ -50,6 +67,16 @@ class HubSubscriber {
     }
 
     /**
+     * Get the callback URL which should be used for handling notifications and
+     * verify requests related to the given topic.
+     * @param TopicInterface The topic being processed.
+     * @return string The callback URL.
+     */
+    protected function getCallbackUrl(TopicInterface $topic) {
+        return $this->generator->generate($this->callbackRoute);
+    }
+
+    /**
      * Get an array of post fields which are common to both subscribe and
      * unsubscribe requests.
      * @param TopicInterface $topic The topic being subscribed or unsubscribed.
@@ -59,6 +86,7 @@ class HubSubscriber {
         $fields = array(
             "hub.verify" => "sync",
             "hub.topic" => $topic->getTopic(),
+            "hub.callback" => $this->getCallbackUrl($topic),
         );
 
         $secret = $topic->getSecret();
@@ -75,6 +103,11 @@ class HubSubscriber {
         return $fields;
     }
 
+    /**
+     * Get the POST fields needed in a subscription request for the given topic.
+     * @param TopicInterface $topic The topic being subscribed to.
+     * @return array The POST fields.
+     */
     protected function getSubscribePostFields(TopicInterface $topic) {
         $fields = $this->getCommonPostFields($topic);
         $fields["hub.mode"] = "subscribe";
@@ -82,17 +115,21 @@ class HubSubscriber {
         return $fields;
     }
 
-    protected function getSubscribeHandle(TopicInterface $topic) {
-        $ch = \curl_init($this->hubUrl);
+    /**
+     * Get a cURL handle for a request to our hub, with the given fields
+     * provided as POST parameters.  Subclasses may wish to override to
+     * set additional options on the handle.
+     * @param array $postFields The fields for the POST request.
+     * @return object The cURL handle to poll the hub with the given parameters.
+     */
+    protected function getRequestHandle(array $postFields) {
+        $ch = \curl_init($this->getHubUrl());
         \curl_setopt_array($ch, array(
             \CURLOPT_POST => true,
-            \CURLOPT_POSTFIELDS => array(
-                "hub.mode" => "subscribe",
-                "hub.verify" => "sync",
-                "hub.topic" => $topic->getTopic(),
-                "hub.callback" => null,
-            ),
+            \CURLOPT_POSTFIELDS => $postFields,
+            \CURLOPT_RETURNTRANSFER => true,
         ));
+        return $ch;
     }
 
     /**
@@ -100,6 +137,7 @@ class HubSubscriber {
      * @param TopicInterface $topic The topic to subscribe to.
      */
     public function subscribe(TopicInterface $topic) {
+        $ch = $this->getRequestHandle($this->getSubscribePostFields($topic));
         
     }
 
