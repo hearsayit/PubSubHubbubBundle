@@ -18,35 +18,33 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-namespace Hearsay\PubSubHubbubBundle\Subscription;
+namespace Hearsay\PubSubHubbubBundle\Hub;
 
 use Hearsay\PubSubHubbubBundle\Exception\SecurityException;
 use Hearsay\PubSubHubbubBundle\Topic\TopicInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
- * Service for subscribing to and unsubscribing from topics in a PubSubHubbub
- * hub.
+ * Helper to interact with a PubSubHubbub hub; manages subscription and polling
+ * interactions with that hub.
  * @author Kevin Montag <kevin@hearsay.it>
  */
-class HubSubscriber {
+class HubManager {
 
     /**
      * @var UrlGeneratorInterface
      */
-    private $generator;
-
+    private $generator = null;
     /**
      * Name of the route to use for callback URLs.
      * @var string
      */
-    private $callbackRoute;
-
+    private $callbackRoute = null;
     /**
      * The URL of the hub we're subscribing/unsubscribing.
      * @var string
      */
-    private $hubUrl;
+    private $hubUrl = null;
 
     /**
      * Standard constructor.
@@ -119,14 +117,12 @@ class HubSubscriber {
      * Get a cURL handle for a request to our hub, with the given fields
      * provided as POST parameters.  Subclasses may wish to override to
      * set additional options on the handle.
-     * @param array $postFields The fields for the POST request.
      * @return object The cURL handle to poll the hub with the given parameters.
      */
-    protected function getRequestHandle(array $postFields) {
+    protected function createRequestHandle() {
         $ch = \curl_init($this->getHubUrl());
         \curl_setopt_array($ch, array(
             \CURLOPT_POST => true,
-            \CURLOPT_POSTFIELDS => $postFields,
             \CURLOPT_RETURNTRANSFER => true,
         ));
         return $ch;
@@ -137,8 +133,8 @@ class HubSubscriber {
      * @param TopicInterface $topic The topic to subscribe to.
      */
     public function subscribe(TopicInterface $topic) {
-        $ch = $this->getRequestHandle($this->getSubscribePostFields($topic));
-        
+        $ch = $this->getRequestHandle();
+        \curl_setopt($ch, \CURLOPT_POSTFIELDS, $this->getSubscribePostFields($topic));
     }
 
 }
