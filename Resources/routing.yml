@@ -1,0 +1,8 @@
+# Route definitions for the PubSubHubbub bundle
+pubsubhubbub_verify:
+    pattern:    /verify
+    defaults:   { _controller: HearsayPubSubHubbubBundle:Default:verify }
+
+pubsubhubbub_notify:
+    pattern:    /notify
+    defaults:   { _controller: HearsayPubSubHubbubBundle:Default:notify }
