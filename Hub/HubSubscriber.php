@@ -29,7 +29,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
  * interactions with that hub.
  * @author Kevin Montag <kevin@hearsay.it>
  */
-class HubManager {
+class HubSubscriber {
 
     /**
      * @var UrlGeneratorInterface
@@ -53,11 +53,13 @@ class HubManager {
      * @param string $callbackRoute Name of the callback route.
      */
     public function __construct($hubUrl, UrlGeneratorInterface $generator, $callbackRoute = "pubsubhubbub") {
-        
+        $this->hubUrl = $hubUrl;
+        $this->generator = $generator;
+        $this->callbackRoute = $callbackRoute;
     }
 
     /**
-     * Get the URL of the hub we're subscribing/unsubscribing.
+     * Get the URL of the hub we're interfacing with.
      * @return string The URL.
      */
     public function getHubUrl() {
@@ -72,6 +74,21 @@ class HubManager {
      */
     protected function getCallbackUrl(TopicInterface $topic) {
         return $this->generator->generate($this->callbackRoute);
+    }
+
+    /**
+     * Get a cURL handle for a request to our hub, with the given fields
+     * provided as POST parameters.  Subclasses may wish to override to
+     * set additional options on the handle.
+     * @return resource The cURL handle to poll the hub with the given parameters.
+     */
+    protected function createRequestHandle() {
+        $ch = \curl_init($this->getHubUrl());
+        \curl_setopt_array($ch, array(
+            \CURLOPT_POST => true,
+            \CURLOPT_RETURNTRANSFER => true,
+        ));
+        return $ch;
     }
 
     /**
@@ -106,26 +123,11 @@ class HubManager {
      * @param TopicInterface $topic The topic being subscribed to.
      * @return array The POST fields.
      */
-    protected function getSubscribePostFields(TopicInterface $topic) {
+    protected function getSubscribeFields(TopicInterface $topic) {
         $fields = $this->getCommonPostFields($topic);
         $fields["hub.mode"] = "subscribe";
 
         return $fields;
-    }
-
-    /**
-     * Get a cURL handle for a request to our hub, with the given fields
-     * provided as POST parameters.  Subclasses may wish to override to
-     * set additional options on the handle.
-     * @return object The cURL handle to poll the hub with the given parameters.
-     */
-    protected function createRequestHandle() {
-        $ch = \curl_init($this->getHubUrl());
-        \curl_setopt_array($ch, array(
-            \CURLOPT_POST => true,
-            \CURLOPT_RETURNTRANSFER => true,
-        ));
-        return $ch;
     }
 
     /**
@@ -134,7 +136,7 @@ class HubManager {
      */
     public function subscribe(TopicInterface $topic) {
         $ch = $this->getRequestHandle();
-        \curl_setopt($ch, \CURLOPT_POSTFIELDS, $this->getSubscribePostFields($topic));
+        \curl_setopt($ch, \CURLOPT_POSTFIELDS, $this->getSubscribeFields($topic));
     }
 
 }
