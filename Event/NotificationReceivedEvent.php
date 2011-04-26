@@ -18,6 +18,9 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+namespace Hearsay\PubSubHubbubBundle\Event;
+
+use Hearsay\PubSubHubbubBundle\Topic\TopicInterface;
 use Symfony\Component\EventDispatcher\Event;
 
 /**
@@ -26,5 +29,54 @@ use Symfony\Component\EventDispatcher\Event;
  */
 class NotificationReceivedEvent extends Event {
 
-    
+    /**
+     * @var TopicInterface
+     */
+    private $topic = null;
+    /**
+     * @var string
+     */
+    private $contentType = null;
+    /**
+     * @var string
+     */
+    private $content = null;
+
+    /**
+     * Standard constructor.
+     * @param TopicInterface $topic The topic which received the notification.
+     * @param string $contentType The content type of the notification.
+     * @param string $content The content received.
+     */
+    public function __construct(TopicInterface $topic, $contentType, $content) {
+        $this->topic = $topic;
+        $this->contentType = $contentType;
+        $this->content = $content;
+    }
+
+    /**
+     * Get the topic receiving the notification.
+     * @return TopicInterface The topic.
+     */
+    public function getTopic() {
+        return $this->topic;
+    }
+
+    /**
+     * Get the content type of the notification, as specified by the
+     * notification's Content-Type header.
+     * @return string The content type, e.g. application/atom+xml.
+     */
+    public function getContentType() {
+        return $this->contentType;
+    }
+
+    /**
+     * Get the raw content of the notification.
+     * @return string The content of the notification.
+     */
+    public function getContent() {
+        return $this->content;
+    }
+
 }

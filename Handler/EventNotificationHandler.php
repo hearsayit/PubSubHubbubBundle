@@ -20,6 +20,9 @@
 
 namespace Hearsay\PubSubHubbubBundle\Handler;
 
+use Hearsay\PubSubHubbubBundle\Events;
+use Hearsay\PubSubHubbubBundle\Event\NotificationReceivedEvent;
+use Hearsay\PubSubHubbubBundle\Topic\TopicInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -32,7 +35,7 @@ class EventNotificationHandler implements NotificationHandlerInterface {
     /**
      * @var EventDispatcherInterface
      */
-    protected $dispatcher = null;
+    private $dispatcher = null;
 
     /**
      * Standard constructor.
@@ -44,8 +47,18 @@ class EventNotificationHandler implements NotificationHandlerInterface {
     }
 
     /**
+     * Get the dispatcher to be used for notifications.
+     * @return EventDispatcherInterface The dispatcher.
+     */
+    protected function getDispatcher() {
+        return $this->dispatcher;
+    }
+
+    /**
      * {@inheritdoc}
      */
-    public function handle($contentType, $content) {
+    public function handle(TopicInterface $topic, $contentType, $content) {
+        $event = new NoficationReceivedEvent($topic, $contentType, $content);
+        $this->getDispatcher()->dispatch(Events::onNotificationReceived, $event);
     }
 }

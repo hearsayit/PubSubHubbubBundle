@@ -20,6 +20,8 @@
 
 namespace Hearsay\PubSubHubbubBundle\Handler;
 
+use Hearsay\PubSubHubbubBundle\Topic\TopicInterface;
+
 /**
  * Interface for objects which can handle hub push notifications.
  * @author Kevin Montag <kevin@hearsay.it>
@@ -30,9 +32,10 @@ interface NotificationHandlerInterface {
      * Respond to a push notification.  As per the PubSubHubbub spec,
      * implementing classes should avoid performing time-consuming operations
      * inside this function.
+     * @param TopicInterface $topic The topic related to the push.
      * @param string $contentType The value of the Content-Type header of the
      * notification request.
      * @param string $content The body of the notification request.
      */
-    public function handle($contentType, $content);
+    public function handle(TopicInterface $topic, $contentType, $content);
 }

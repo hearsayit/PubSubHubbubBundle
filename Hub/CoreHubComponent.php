@@ -23,7 +23,7 @@ namespace Hearsay\PubSubHubbubBundle\Hub;
 use Hearsay\PubSubHubbubBundle\Exception\BadOptionException;
 use Hearsay\PubSubHubbubBundle\Exception\SecurityException;
 use Hearsay\PubSubHubbubBundle\Topic\TopicInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Routing\RouterInterface;
 
 /**
  * Component providing subscribe/unsubscribe functionality for the bundle.
@@ -40,6 +40,7 @@ class CoreHubComponent extends AbstractHubComponent {
     private $generator = null;
 
     /**
+     * Standard constructor.
      * @param UrlGeneratorInterface $generator The helper to generate callback
      * URLs.
      * @param string $callbackRoute The route which should be used as a callback

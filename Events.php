@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the Hearsay PubSubHubbub bundle.
  *
@@ -17,23 +18,18 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-namespace Hearsay\PubSubHubbubBundle\Controller;
-
-use Hearsay\PubSubHubbubBundle\Topic\TopicProviderInterface;
+namespace Hearsay\PubSubHubbubBundle;
 
 /**
- * Controller service to handle requests from PubSubHubbub hubs.
- * @author Kevin Montag
+ * List of events thrown in the PubSubHubbub bundle.
+ * @author Kevin Montag <kevin@hearsay.it>
  */
-class DefaultController {
-
-    public function __construct(TopicProviderInterface $topicProvider, )
-
+final class Events {
     /**
-     * Primary callback action for interactions with hubs.
-     * @return \Symfony\Component\HttpFoundation\Response
+     * The onNotificationReceived event occurs when a push notification is
+     * received from a PubSubHubbub hub.  Listeners receive an instance of
+     * Hearsay\PubSubHubbubBundle\Event\NotificationReceivedEvent.
+     * @var string
      */
-    public function callbackAction($identifier) {
-    
-    }
+    const onNotificationReceived = "onNotificationReceived";
 }
