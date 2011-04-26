@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the Hearsay PubSubHubbub bundle.
  *
@@ -17,23 +18,34 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-namespace Hearsay\PubSubHubbubBundle\Controller;
+namespace Hearsay\PubSubHubbubBundle\Handler;
 
-use Hearsay\PubSubHubbubBundle\Topic\TopicProviderInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
- * Controller service to handle requests from PubSubHubbub hubs.
- * @author Kevin Montag
+ * Simple notification handler which dispatches an event upon receiving a
+ * notification.
+ * @author Kevin Montag <kevin@hearsay.it>
  */
-class DefaultController {
-
-    public function __construct(TopicProviderInterface $topicProvider, )
+class EventNotificationHandler implements NotificationHandlerInterface {
 
     /**
-     * Primary callback action for interactions with hubs.
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @var EventDispatcherInterface
      */
-    public function callbackAction($identifier) {
-    
+    protected $dispatcher = null;
+
+    /**
+     * Standard constructor.
+     * @param EventDispatcherInterface $dispatcher Dispatcher to use for
+     * notifications.
+     */
+    public function __construct(EventDispatcherInterface $dispatcher) {
+        $this->dispatcher = $dispatcher;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function handle($contentType, $content) {
     }
 }

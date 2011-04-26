@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the Hearsay PubSubHubbub bundle.
  *
@@ -17,23 +18,13 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-namespace Hearsay\PubSubHubbubBundle\Controller;
-
-use Hearsay\PubSubHubbubBundle\Topic\TopicProviderInterface;
+use Symfony\Component\EventDispatcher\Event;
 
 /**
- * Controller service to handle requests from PubSubHubbub hubs.
- * @author Kevin Montag
+ * Event signaling that a push notification has been received.
+ * @author Kevin Montag <kevin@hearsay.it>
  */
-class DefaultController {
+class NotificationReceivedEvent extends Event {
 
-    public function __construct(TopicProviderInterface $topicProvider, )
-
-    /**
-     * Primary callback action for interactions with hubs.
-     * @return \Symfony\Component\HttpFoundation\Response
-     */
-    public function callbackAction($identifier) {
     
-    }
 }

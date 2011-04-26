@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the Hearsay PubSubHubbub bundle.
  *
@@ -17,23 +18,21 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-namespace Hearsay\PubSubHubbubBundle\Controller;
-
-use Hearsay\PubSubHubbubBundle\Topic\TopicProviderInterface;
+namespace Hearsay\PubSubHubbubBundle\Handler;
 
 /**
- * Controller service to handle requests from PubSubHubbub hubs.
- * @author Kevin Montag
+ * Interface for objects which can handle hub push notifications.
+ * @author Kevin Montag <kevin@hearsay.it>
  */
-class DefaultController {
-
-    public function __construct(TopicProviderInterface $topicProvider, )
+interface NotificationHandlerInterface {
 
     /**
-     * Primary callback action for interactions with hubs.
-     * @return \Symfony\Component\HttpFoundation\Response
+     * Respond to a push notification.  As per the PubSubHubbub spec,
+     * implementing classes should avoid performing time-consuming operations
+     * inside this function.
+     * @param string $contentType The value of the Content-Type header of the
+     * notification request.
+     * @param string $content The body of the notification request.
      */
-    public function callbackAction($identifier) {
-    
-    }
+    public function handle($contentType, $content);
 }
