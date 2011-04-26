@@ -20,6 +20,7 @@
 
 namespace Hearsay\PubSubHubbubBundle\Hub;
 
+use Doctrine\ORM\EntityManager;
 use Hearsay\PubSubHubbubBundle\Exception\SecurityException;
 use Hearsay\PubSubHubbubBundle\Topic\TopicInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -32,19 +33,24 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class HubSubscriber {
 
     /**
+     * The URL of the hub we're subscribing/unsubscribing.
+     * @var string
+     */
+    private $hubUrl = null;
+    /**
      * @var UrlGeneratorInterface
      */
     private $generator = null;
+    /**
+     * The subscriber extensions to apply to requests.
+     * @var array
+     */
+    private $extensions = null;
     /**
      * Name of the route to use for callback URLs.
      * @var string
      */
     private $callbackRoute = null;
-    /**
-     * The URL of the hub we're subscribing/unsubscribing.
-     * @var string
-     */
-    private $hubUrl = null;
 
     /**
      * Standard constructor.
@@ -52,9 +58,10 @@ class HubSubscriber {
      * @param UrlGeneratorInterface $generator Helper to generate callback URLs.
      * @param string $callbackRoute Name of the callback route.
      */
-    public function __construct($hubUrl, UrlGeneratorInterface $generator, $callbackRoute = "pubsubhubbub") {
+    public function __construct($hubUrl, UrlGeneratorInterface $generator, array $extensions = array(), $callbackRoute = "pubsubhubbub") {
         $this->hubUrl = $hubUrl;
         $this->generator = $generator;
+        $this->extensions = $extensions;
         $this->callbackRoute = $callbackRoute;
     }
 
@@ -68,7 +75,7 @@ class HubSubscriber {
 
     /**
      * Get the callback URL which should be used for handling notifications and
-     * verify requests related to the given topic.
+     * verifying requests related to the given topic.
      * @param TopicInterface The topic being processed.
      * @return string The callback URL.
      */
@@ -77,27 +84,20 @@ class HubSubscriber {
     }
 
     /**
-     * Get a cURL handle for a request to our hub, with the given fields
-     * provided as POST parameters.  Subclasses may wish to override to
-     * set additional options on the handle.
-     * @return resource The cURL handle to poll the hub with the given parameters.
+     * Get the extensions which should be applied to requests.
+     * @return array The extensions.
      */
-    protected function createRequestHandle() {
-        $ch = \curl_init($this->getHubUrl());
-        \curl_setopt_array($ch, array(
-            \CURLOPT_POST => true,
-            \CURLOPT_RETURNTRANSFER => true,
-        ));
-        return $ch;
+    protected function getExtensions() {
+        return $this->extensions;
     }
 
     /**
      * Get an array of post fields which are common to both subscribe and
      * unsubscribe requests.
      * @param TopicInterface $topic The topic being subscribed or unsubscribed.
-     * @return array The post fields for the action.
+     * @return array The basic POST fields for the subscription actions.
      */
-    private function getCommonPostFields(TopicInterface $topic) {
+    private function getCommonFields(TopicInterface $topic) {
         $fields = array(
             "hub.verify" => "sync",
             "hub.topic" => $topic->getTopic(),
@@ -119,24 +119,27 @@ class HubSubscriber {
     }
 
     /**
-     * Get the POST fields needed in a subscription request for the given topic.
-     * @param TopicInterface $topic The topic being subscribed to.
-     * @return array The POST fields.
+     * Sign up to receive updates, or unsubscribe from updates, for a particular
+     * topic on this hub.
+     * @param bool $subscribe Whether to subscribe (true) or unsubscribe
+     * (false).
+     * @param TopicInterface $topic The topic to subscribe or unsubscribe.
      */
-    protected function getSubscribeFields(TopicInterface $topic) {
-        $fields = $this->getCommonPostFields($topic);
-        $fields["hub.mode"] = "subscribe";
+    public function changeSubscriptionState($subscribe, TopicInterface $topic) {
+        // Set up the request
+        $ch = \curl_init($this->getHubUrl());
+        \curl_setopt_array($ch, array(
+            \CURLOPT_POST => true,
+            \CURLOPT_RETURNTRANSFER => true,
+        ));
 
-        return $fields;
-    }
+        $fields = $this->getCommonFields($topic);
+        $fields["hub.mode"] = $subscribe ? "subscribe" : "unsubscribe";
 
-    /**
-     * Register to receive updates on a topic.
-     * @param TopicInterface $topic The topic to subscribe to.
-     */
-    public function subscribe(TopicInterface $topic) {
-        $ch = $this->getRequestHandle();
-        \curl_setopt($ch, \CURLOPT_POSTFIELDS, $this->getSubscribeFields($topic));
+        \curl_setopt($ch, \CURLOPT_POSTFIELDS, $fields);
+
+        // Execute it
+        $response = \curl_exec($ch);
     }
 
 }

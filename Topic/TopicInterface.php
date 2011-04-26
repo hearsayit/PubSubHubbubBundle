@@ -42,7 +42,23 @@ interface TopicInterface {
 
     /**
      * Get a unique identifier which can be used to retrieve this topic.
-     * @return string A unique identifier.
+     * @return mixed A unique identifier.
      */
     public function getIdentifier();
+
+    /**
+     * Check whether we should respond affirmatively to subscription
+     * verifications for this topic.  Note that this includes automatic
+     * resubscription verifications submitted by the subscribed hub as
+     * subscriptions are expiring; thus, to allow for infinite automatic
+     * subscription renewal, implementing classes may simply always return true.
+     * @return bool Whether we should verify subscription requests.
+     */
+    public function isSubscribeAllowed();
+
+    /**
+     * Check whether we should respond affirmatively to unsubscribe
+     * verifications for this topic.
+     */
+    public function isUnsubscribeAllowed();
 }

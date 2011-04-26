@@ -17,19 +17,15 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-namespace Hearsay\PubSubHubbubBundle\Topic;
+namespace Hearsay\PubSubHubbubBundle\Hub;
 
 /**
- * Interface implemented by objects which can fetch topics based on their
- * identifier.
+ * Extension to interact with the Superfeedr hub.
  * @author Kevin Montag <kevin@hearsay.it>
  */
-interface TopicProviderInterface {
+class SuperfeedrSubscriberExtension extends AbstractHubSubscriberExtension {
 
-    /**
-     * Get the topic associated with the given identifier.
-     * @param mixed $identifier The identifier.
-     * @return TopicInterface The topic.
-     */
-    public function getTopic($identifier);
+    public function __construct($username, $password) {
+        
+    }
 }

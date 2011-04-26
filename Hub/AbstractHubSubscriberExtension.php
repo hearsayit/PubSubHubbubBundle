@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the Hearsay PubSubHubbub bundle.
  *
@@ -17,19 +18,37 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-namespace Hearsay\PubSubHubbubBundle\Topic;
+namespace Hearsay\PubSubHubbubBundle\Hub;
+
+use Hearsay\PubSubHubbubBundle\Topic\TopicInterface;
 
 /**
- * Interface implemented by objects which can fetch topics based on their
- * identifier.
+ * Simple base class for extensions to the hub subscriber; provided as a
+ * convenience for implementing extensions which only perform interesting work
+ * for some of the methods of the extension interface.
  * @author Kevin Montag <kevin@hearsay.it>
  */
-interface TopicProviderInterface {
+abstract class AbstractHubSubscriberExtension {
 
     /**
-     * Get the topic associated with the given identifier.
-     * @param mixed $identifier The identifier.
-     * @return TopicInterface The topic.
+     * @inheritdoc}
      */
-    public function getTopic($identifier);
+    public function getOptions() {
+        return array();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getAdditionalSubscriptionParameters(TopicInterface $topic, array $options) {
+        return array();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function modifySubscriptionRequest(resource $ch) {
+        
+    }
+
 }
