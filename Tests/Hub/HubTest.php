@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the Hearsay PubSubHubbub bundle.
  *
@@ -17,15 +18,20 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-namespace Hearsay\PubSubHubbubBundle\Hub;
+namespace Hearsay\PubSubHubbubBundle\Tests\Hub;
 
 /**
- * Extension to interact with the Superfeedr hub.
+ * Unit tests for hub connections.
  * @author Kevin Montag <kevin@hearsay.it>
  */
-class SuperfeedrSubscriberExtension extends AbstractHubSubscriberExtension {
+class HubTest extends \PHPUnit_Framework_TestCase {
 
-    public function __construct($username, $password) {
-        
+    /**
+     * Make sure the hub passes any options provided during requests down to
+     * its components, using component-specified defaults for options which are
+     * not provided.
+     */
+    public function testOptionsProvidedToComponents() {
+        // TODO: Decent way of mocking cURL functionality
     }
 }

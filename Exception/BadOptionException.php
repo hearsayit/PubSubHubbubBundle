@@ -18,37 +18,12 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-namespace Hearsay\PubSubHubbubBundle\Hub;
-
-use Hearsay\PubSubHubbubBundle\Topic\TopicInterface;
+namespace Hearsay\PubSubHubbubBundle\Exception;
 
 /**
- * Simple base class for extensions to the hub subscriber; provided as a
- * convenience for implementing extensions which only perform interesting work
- * for some of the methods of the extension interface.
+ * Exception thrown when a bad option is passed in when making a hub request.
  * @author Kevin Montag <kevin@hearsay.it>
  */
-abstract class AbstractHubSubscriberExtension {
-
-    /**
-     * @inheritdoc}
-     */
-    public function getOptions() {
-        return array();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getAdditionalSubscriptionParameters(TopicInterface $topic, array $options) {
-        return array();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function modifySubscriptionRequest(resource $ch) {
-        
-    }
+class BadOptionException extends \Exception {
 
 }

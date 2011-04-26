@@ -20,14 +20,13 @@
 
 namespace Hearsay\PubSubHubbubBundle\Hub;
 
-use Doctrine\ORM\EntityManager;
 use Hearsay\PubSubHubbubBundle\Exception\SecurityException;
 use Hearsay\PubSubHubbubBundle\Topic\TopicInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
- * Helper to interact with a PubSubHubbub hub; manages subscription and polling
- * interactions with that hub.
+ * Helper to manage subscriptions on a PubSubHubbub hub which implements at
+ * least the core spec.
  * @author Kevin Montag <kevin@hearsay.it>
  */
 class HubSubscriber {
@@ -92,12 +91,20 @@ class HubSubscriber {
     }
 
     /**
-     * Get an array of post fields which are common to both subscribe and
-     * unsubscribe requests.
-     * @param TopicInterface $topic The topic being subscribed or unsubscribed.
-     * @return array The basic POST fields for the subscription actions.
+     * Sign up to receive updates, or unsubscribe from updates, for a particular
+     * topic on this hub.
+     * @param bool $subscribe Whether to subscribe (true) or unsubscribe
+     * (false).
+     * @param TopicInterface $topic The topic to subscribe or unsubscribe.
      */
-    private function getCommonFields(TopicInterface $topic) {
+    public function changeSubscriptionState($subscribe, TopicInterface $topic) {
+        // Set up the request
+        $ch = \curl_init($this->getHubUrl());
+        \curl_setopt_array($ch, array(
+            \CURLOPT_POST => true,
+            \CURLOPT_RETURNTRANSFER => true,
+        ));
+
         $fields = array(
             "hub.verify" => "sync",
             "hub.topic" => $topic->getTopic(),
@@ -114,26 +121,6 @@ class HubSubscriber {
                 throw new SecurityException("Hub secret values may only be sent over a secure connection.");
             }
         }
-
-        return $fields;
-    }
-
-    /**
-     * Sign up to receive updates, or unsubscribe from updates, for a particular
-     * topic on this hub.
-     * @param bool $subscribe Whether to subscribe (true) or unsubscribe
-     * (false).
-     * @param TopicInterface $topic The topic to subscribe or unsubscribe.
-     */
-    public function changeSubscriptionState($subscribe, TopicInterface $topic) {
-        // Set up the request
-        $ch = \curl_init($this->getHubUrl());
-        \curl_setopt_array($ch, array(
-            \CURLOPT_POST => true,
-            \CURLOPT_RETURNTRANSFER => true,
-        ));
-
-        $fields = $this->getCommonFields($topic);
         $fields["hub.mode"] = $subscribe ? "subscribe" : "unsubscribe";
 
         \curl_setopt($ch, \CURLOPT_POSTFIELDS, $fields);
