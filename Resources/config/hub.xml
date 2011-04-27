@@ -16,15 +16,55 @@
  along with the Hearsay PubSubHubbub bundle.  If not, see
  <http://www.gnu.org/licenses/>.
 -->
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
-<parameters>
-    <parameter key="hearsay_pubsubhubbub.
-</parameters>
+    <parameters>
+        <parameter key="hearsay_pubsubhubbub.callback_route" type="string">pubsubhubbub</parameter>
+        <parameter key="hearsay_pubsubhubbub.hub_url" type="string"></parameter>
+        <parameter key="hearsay_pubsubhubbub.superfeedr_username" type="string"></parameter>
+        <parameter key="hearsay_pubsubhubbub.superfeedr_password" type="string"></parameter>
+    </parameters>
 
-<services>
-    <service
-        id="hearsay_pubsubhubbub.hub_subscriber"
-        class="Hearsay\PubSubHubbubBundle\Hub\HubSubscriber" >
-        
-    </service>
-</services>
+    <services>
+        <!-- Main hub -->
+        <service
+            id="hearsay_pubsubhubbub.hub"
+            class="Hearsay\PubSubHubbubBundle\Hub\Hub">
+            <argument type="string">%hearsay_pubsubhubbub.hub_url%</argument>
+        </service>
+
+        <!-- Core hub component -->
+        <service
+            id="hearsay_pubsubhubbub.core_component"
+            class="Hearsay\PubSubHubbub\Hub\CoreHubComponent"
+            public="false">
+            <argument type="service" id="router" />
+            <argument type="string">%hearsay_pubsubhubbub.callback_route%</argument>
+        </service>
+
+        <!-- Superfeedr hub component -->
+        <service
+            id="hearsay_pubsubhubbub.superfeedr_component"
+            class="Hearsay\PubSubHubbub\Hub\SuperfeedrComponent"
+            public="false">
+            <argument type="string">%hearsay_pubsubhubbub.superfeedr_username%</argument>
+            <argument type="string">%hearsay_pubsubhubbub.superfeedr_password%</argument>
+        </service>
+
+        <!-- Default event handler -->
+        <service
+            id="hearsay_pubsubhubbub.event_handler"
+            class="Hearsay\PubSubHubbubBundle\Handler\EventNotificationHandler"
+            public="false">
+            <argument type="service" id="dispatcher" />
+        </service>
+
+        <!-- Subscription helper -->
+        <service
+            id="hearsay_pubsubhubbub.hub_subscriber"
+            class="Hearsay\PubSubHubbubBundle\Hub\HubSubscriber" >
+        </service>
+    </services>
+</container>

@@ -20,6 +20,12 @@
 
 namespace Hearsay\PubSubHubbubBundle\DependencyInjection;
 
+use Symfony\Component\Config\FileLocator;
+use Symfony\Component\Config\Definition\Processor;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Parameter;
+use Symfony\Component\DependencyInjection\Reference;
+use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 /**
@@ -33,9 +39,46 @@ class HearsayPubSubHubbubExtension extends Extension {
     /**
      * {@inheritdoc}
      */
-    public function load(array $config, ContainerBuilder $configuration) {
-        $loader = new XmlFileLoader($configuration, new FileLocator(__DIR__ . "/../Resources/config"));
-        $loader->load("hub.xml");        
+    public function load(array $configs, ContainerBuilder $container) {
+        $loader = new XmlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
+
+        $processor = new Processor();
+
+        $configuration = new Configuration();
+        $config = $processor->processConfiguration($configuration, $configs);
+        $loader->load('hub.xml');
+
+        // Set the hub URL
+        $container->setParameter('hearsay_pubsubhubbub.hub_url', $config['hub']);
+
+        // Use the configured service as the handler
+        $container->setAlias('hearsay_pubsubhubbub.notification_handler', $config['handler']);
+
+        $extensions = array();
+
+        // Set the extensions to use
+        if ($config['core']) {
+            $extensions[] = new Reference('hearsay_pubsubhubbub.core_component');
+        }
+
+        // Add the superfeedr component if it's been configured
+        if (isset($config['superfeedr'])) {
+            $container->setParameter('hearsay_pubsubhubbub.superfeedr_username', $config['superfeedr']['username']);
+            $container->setParameter('hearsay_pubsubhubbub.superfeedr_password', $config['superfeedr']['password']);
+
+            $extensions[] = new Reference('hearsay_pubsubhubbub.superfeedr_component');
+        }
+
+        // TODO: Other extensions
+        // 
+        // Add the extensions argument to our hub
+        $container->getDefinition('hearsay_pubsubhubbub.hub')->addArgument($extensions);        
     }
 
+    private function createHandler($config, ContainerBuilder $container) {
+        // Custom handler service
+        if (isset($config['id'])) {
+            return new Reference($config['id']);
+        }
+    }
 }

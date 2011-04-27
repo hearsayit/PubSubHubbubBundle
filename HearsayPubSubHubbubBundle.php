@@ -17,7 +17,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-namespace Hearsay\ApiBundle;
+namespace Hearsay\PubSubHubbubBundle;
 
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
