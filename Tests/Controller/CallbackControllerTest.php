@@ -170,4 +170,39 @@ class CallbackControllerTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals(404, $response->getStatusCode());
     }
 
+    /**
+     * Make sure subscription or unsubscription requests are allowed when
+     * they're supposed to be.
+     */
+    public function testGoodSubscriptionVerified() {
+        $request = new Request(array(), array(
+                    "hub.mode" => "subscribe",
+                    "hub.topic" => "http://rss.topic.com/",
+                    "hub.challenge" => "print this",
+                    "hub.lease_seconds" => 100,
+                ));
+
+        $this->topic
+                ->expects($this->any())
+                ->method("getTopic")
+                ->will($this->returnValue("http://rss.topic.com/"));
+
+        $this->topic
+                ->expects($this->any())
+                ->method("isSubscribeAllowed")
+                ->will($this->returnValue(true));
+
+        // We shouldn't receive a notification
+        $this->notificationHandler
+                ->expects($this->never())
+                ->method("handle");
+
+        $controller = new CallbackController($this->topicProvider, $this->notificationHandler, $request);
+        $response = $controller->callbackAction($this->identifier);
+
+        // And we should be successful
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals("print this", $response->getContent());
+    }
+
 }
