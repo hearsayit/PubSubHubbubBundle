@@ -22,6 +22,8 @@ namespace Hearsay\PubSubHubbubBundle\Topic;
 /**
  * Interface implemented by objects which can fetch topics based on their
  * identifier.
+ * @package HearsayPubSubHubbubBundle
+ * @subpackage Topic
  * @author Kevin Montag <kevin@hearsay.it>
  */
 interface TopicProviderInterface {

@@ -27,6 +27,8 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 /**
  * Helper to manage subscriptions on a PubSubHubbub hub which implements at
  * least the core spec.
+ * @package HearsayPubSubHubbubBundle
+ * @subpackage Hub
  * @author Kevin Montag <kevin@hearsay.it>
  */
 class HubSubscriber {

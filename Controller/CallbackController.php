@@ -27,6 +27,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Controller service to handle requests from PubSubHubbub hubs.
+ * @package HearsayPubSubHubbubBundle
+ * @subpackage Controller
  * @author Kevin Montag <kevin@hearsay.it>
  */
 class CallbackController {

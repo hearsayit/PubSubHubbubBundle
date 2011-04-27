@@ -22,6 +22,8 @@ namespace Hearsay\PubSubHubbubBundle\Exception;
 
 /**
  * Exception thrown when a bad option is passed in when making a hub request.
+ * @package HearsayPubSubHubbubBundle
+ * @subpackage Exception
  * @author Kevin Montag <kevin@hearsay.it>
  */
 class BadOptionException extends \Exception {

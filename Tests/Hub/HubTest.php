@@ -22,6 +22,8 @@ namespace Hearsay\PubSubHubbubBundle\Tests\Hub;
 
 /**
  * Unit tests for hub connections.
+ * @package HearsayPubSubHubbubBundle
+ * @subpackage Tests
  * @author Kevin Montag <kevin@hearsay.it>
  */
 class HubTest extends \PHPUnit_Framework_TestCase {

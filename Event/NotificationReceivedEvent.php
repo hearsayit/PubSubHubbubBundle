@@ -25,6 +25,8 @@ use Symfony\Component\EventDispatcher\Event;
 
 /**
  * Event signaling that a push notification has been received.
+ * @package HearsayPubSubHubbubBundle
+ * @subpackage Event
  * @author Kevin Montag <kevin@hearsay.it>
  */
 class NotificationReceivedEvent extends Event {

@@ -30,6 +30,8 @@ use Hearsay\PubSubHubbubBundle\Topic\TopicInterface;
  * spec should not worry about implementing the core spec as well, but rather
  * should assume that the component implementing the core spec will be used
  * in addition.
+ * @package HearsayPubSubHubbubBundle
+ * @subpackage Hub
  * @author Kevin Montag <kevin@hearsay.it>
  */
 interface HubComponentInterface {

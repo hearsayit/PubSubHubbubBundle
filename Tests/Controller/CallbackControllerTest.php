@@ -26,6 +26,8 @@ use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Unit tests for the callback controller.
+ * @package HearsayPubSubHubbubBundle
+ * @subpackage Tests
  * @author Kevin Montag <kevin@hearsay.it>
  */
 class CallbackControllerTest extends \PHPUnit_Framework_TestCase {
@@ -104,7 +106,7 @@ class CallbackControllerTest extends \PHPUnit_Framework_TestCase {
         $response = $controller->callbackAction($this->identifier);
 
         // And we should see a successful response
-        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertTrue($response->isSuccessful());
     }
 
     /**
@@ -135,7 +137,7 @@ class CallbackControllerTest extends \PHPUnit_Framework_TestCase {
         $response = $controller->callbackAction($this->identifier);
 
         // And we should silently fail
-        $this->assertEquals(404, $response->getStatusCode());
+        $this->assertTrue($response->isNotFound());
     }
 
     /**
@@ -167,12 +169,13 @@ class CallbackControllerTest extends \PHPUnit_Framework_TestCase {
         $response = $controller->callbackAction($this->identifier);
 
         // And we should silently fail
-        $this->assertEquals(404, $response->getStatusCode());
+        $this->assertTrue($response->isNotFound());
     }
 
     /**
      * Make sure subscription or unsubscription requests are allowed when
      * they're supposed to be.
+     * @covers Hearsay\PubSubHubbubBundle\Controller\CallbackController
      */
     public function testGoodSubscriptionVerified() {
         $request = new Request(array(), array(
@@ -201,7 +204,7 @@ class CallbackControllerTest extends \PHPUnit_Framework_TestCase {
         $response = $controller->callbackAction($this->identifier);
 
         // And we should be successful
-        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertTrue(200, $response->isNotFound());
         $this->assertEquals("print this", $response->getContent());
     }
 

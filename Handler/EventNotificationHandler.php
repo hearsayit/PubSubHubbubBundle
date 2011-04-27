@@ -28,6 +28,8 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 /**
  * Simple notification handler which dispatches an event upon receiving a
  * notification.
+ * @package HearsayPubSubHubbubBundle
+ * @subpackage Handler
  * @author Kevin Montag <kevin@hearsay.it>
  */
 class EventNotificationHandler implements NotificationHandlerInterface {

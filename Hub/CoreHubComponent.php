@@ -29,6 +29,8 @@ use Symfony\Component\Routing\RouterInterface;
  * Component providing subscribe/unsubscribe functionality for the bundle.
  * Interacts with hubs implementing the core PubSubHubbub spec.
  * @link http://pubsubhubbub.googlecode.com/svn/trunk/pubsubhubbub-core-0.3.html
+ * @package HearsayPubSubHubbubBundle
+ * @subpackage Hub
  * @author Kevin Montag <kevin@hearsay.it>
  */
 class CoreHubComponent extends AbstractHubComponent {

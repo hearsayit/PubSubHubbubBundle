@@ -23,6 +23,8 @@ namespace Hearsay\PubSubHubbubBundle\Hub;
 /**
  * Object representing a PubSubHubbub hub, with any number of supported
  * components for interaction with that hub.
+ * @package HearsayPubSubHubbubBundle
+ * @subpackage Hub
  * @author Kevin Montag <kevin@hearsay.it>
  */
 class Hub {

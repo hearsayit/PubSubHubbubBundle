@@ -24,6 +24,8 @@ namespace Hearsay\PubSubHubbubBundle\Hub;
  * Simple base class for hub components; provided as a convenience for
  * implementing components which only perform interesting work for some of the
  * methods of the interface.
+ * @package HearsayPubSubHubbubBundle
+ * @subpackage Hub
  * @author Kevin Montag <kevin@hearsay.it>
  */
 class AbstractHubComponent implements HubComponentInterface {

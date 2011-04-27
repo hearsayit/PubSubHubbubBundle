@@ -23,6 +23,8 @@ namespace Hearsay\PubSubHubbubBundle\Hub;
 /**
  * Hub component allowing for interaction with the Superfeedr hub.
  * @link http://superfeedr.com/
+ * @package HearsayPubSubHubbubBundle
+ * @subpackage Hub
  * @author Kevin Montag <kevin@hearsay.it>
  */
 class SuperfeedrComponent extends AbstractHubComponent {

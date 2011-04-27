@@ -22,6 +22,7 @@ namespace Hearsay\PubSubHubbubBundle;
 
 /**
  * List of events thrown in the PubSubHubbub bundle.
+ * @package HearsayPubSubHubbubBundle
  * @author Kevin Montag <kevin@hearsay.it>
  */
 final class Events {

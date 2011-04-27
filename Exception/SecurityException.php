@@ -22,6 +22,8 @@ namespace Hearsay\PubSubHubbubBundle\Exception;
 /**
  * Exception thrown when a security constraint of the PubSubHubbub flow is
  * violated.
+ * @package HearsayPubSubHubbubBundle
+ * @subpackage Exception
  * @author Kevin Montag <kevin@hearsay.it>
  */
 class SecurityException extends \Exception {

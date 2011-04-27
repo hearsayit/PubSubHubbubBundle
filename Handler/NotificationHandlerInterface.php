@@ -24,6 +24,8 @@ use Hearsay\PubSubHubbubBundle\Topic\TopicInterface;
 
 /**
  * Interface for objects which can handle hub push notifications.
+ * @package HearsayPubSubHubbubBundle
+ * @subpackage Handler
  * @author Kevin Montag <kevin@hearsay.it>
  */
 interface NotificationHandlerInterface {

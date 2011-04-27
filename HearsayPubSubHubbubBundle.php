@@ -24,6 +24,7 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
 /**
  * Bundle providing helpers for interacting with PubSubHubbub hubs as a
  * subscriber.
+ * @package HearsayPubSubHubbubBundle
  * @author Kevin Montag <kevin@hearsay.it>
  */
 class HearsayPubSubHubbubBundle extends Bundle
