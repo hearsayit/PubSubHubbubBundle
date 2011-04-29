@@ -36,14 +36,21 @@
             <!-- Additional arguments added in extension code -->
         </service>
 
-	<service
+        <!-- Controller containing the main callback action -->
+        <service
 	    id="hearsay_pubsubhubbub.callback_controller"
-	    class="Hearsay\PubSubHubbubBundle\Controller\CallbackController"
-            public="false" >
-	    <argument type="service" id="hearsay_pubsubhubbub.topic_provider" />
-	    <argument type="service" id="hearsay_pubsubhubbub.notification_handler" />
-	    <argument type="service" id="request" />
-	</service>
+	    class="Hearsay\PubSubHubbubBundle\Controller\CallbackController" >
+            <argument type="service" id="hearsay_pubsubhubbub.topic_provider" />
+            <argument type="service" id="hearsay_pubsubhubbub.notification_handler" />
+            <argument type="service" id="service_container" />
+        </service>
+
+        <!-- Doctrine topic provider -->
+        <service
+            id="hearsay_pubsubhubbub.doctrine_topic_provider"
+            class="Hearsay\PubSubHubbubBundle\Topic\DoctrineTopicProvider">
+            <!-- Arguments added in extension code -->
+        </service>
 
         <!-- Core hub component -->
         <service
@@ -68,7 +75,7 @@
             id="hearsay_pubsubhubbub.event_handler"
             class="Hearsay\PubSubHubbubBundle\Handler\EventNotificationHandler"
             public="false">
-            <argument type="service" id="dispatcher" />
+            <argument type="service" id="event_dispatcher" />
         </service>
 
         <!-- Subscription helper -->

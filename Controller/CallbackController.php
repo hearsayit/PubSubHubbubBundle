@@ -22,6 +22,7 @@ namespace Hearsay\PubSubHubbubBundle\Controller;
 
 use Hearsay\PubSubHubbubBundle\Handler\NotificationHandlerInterface;
 use Hearsay\PubSubHubbubBundle\Topic\TopicProviderInterface;
+use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -35,18 +36,18 @@ class CallbackController {
 
     private $topicProvider = null;
     private $notificationHandler = null;
-    private $request = null;
+    private $container = null;
 
     /**
      * Standard constructor.
      * @param TopicProviderInterface $topicProvider
      * @param NotificationHandlerInterface $notificationHandler
-     * @param Request $request 
+     * @param Container $container
      */
-    public function __construct(TopicProviderInterface $topicProvider, NotificationHandlerInterface $notificationHandler, Request $request) {
+    public function __construct(TopicProviderInterface $topicProvider, NotificationHandlerInterface $notificationHandler, Container $container) {
         $this->topicProvider = $topicProvider;
         $this->notificationHandler = $notificationHandler;
-        $this->request = $request;
+        $this->container = $container;
     }
 
     /**
@@ -70,7 +71,7 @@ class CallbackController {
      * @return Request The request.
      */
     protected function getRequest() {
-        return $this->request;
+        return $this->container->get('request');
     }
 
     /**

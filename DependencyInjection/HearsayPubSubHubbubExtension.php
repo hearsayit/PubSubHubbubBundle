@@ -73,5 +73,17 @@ class HearsayPubSubHubbubExtension extends Extension {
         // Add the extensions and factory arguments to our hub
         $container->getDefinition('hearsay_pubsubhubbub.hub')->addArgument($extensions);
         $container->getDefinition('hearsay_pubsubhubbub.hub')->addArgument(new Reference('hearsay_pubsubhubbub.curl_factory'));
+
+        // Set up the provider
+        if (isset($config['provider']['service'])) {
+            $container->setAlias('hearsay_pubsubhubbub.topic_provider', $config['provider']['service']);
+        } else if (isset($config['provider']['doctrine'])) {
+            $doctrineConfig = $config['provider']['doctrine'];
+            $definition = $container->getDefinition('hearsay_pubsubhubbub.doctrine_topic_provider');
+            $definition->addArgument(new Reference($doctrineConfig['manager']));
+            $definition->addArgument($doctrineConfig['entity']);
+            $definition->addArgument($doctrineConfig['property']);
+            $container->setAlias('hearsay_pubsubhubbub.topic_provider', 'hearsay_pubsubhubbub.doctrine_topic_provider');
+        }
     }
 }

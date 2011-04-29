@@ -48,8 +48,17 @@ class DoctrineTopicProvider implements TopicProviderInterface {
      */
     private $topicIdProperty = null;
 
+    /**
+     * Standard constructor.
+     * @param EntityManager $entityManager The entity manager containing topics.
+     * @param string $topicClass The topic entity class.
+     * @param string $topicIdProperty The property on topic entities which is
+     * used as their unique identifier.
+     */
     public function __construct(EntityManager $entityManager, $topicClass, $topicIdProperty = 'id') {
         $this->entityManager = $entityManager;
+        $this->topicClass = $topicClass;
+        $this->topicIdProperty = $topicIdProperty;
     }
 
     /**
