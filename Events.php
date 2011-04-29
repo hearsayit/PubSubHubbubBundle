@@ -32,5 +32,5 @@ final class Events {
      * Hearsay\PubSubHubbubBundle\Event\NotificationReceivedEvent.
      * @var string
      */
-    const onNotificationReceived = "onNotificationReceived";
+    const onPushNotificationReceived = "onPushNotificationReceived";
 }

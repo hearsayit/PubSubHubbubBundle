@@ -74,11 +74,4 @@ class HearsayPubSubHubbubExtension extends Extension {
         $container->getDefinition('hearsay_pubsubhubbub.hub')->addArgument($extensions);
         //$container->getDefinition('hearsay_pubsubhubbub.hub')->addArgument($container->get('hearsay_pubsubhubbub.curl_factory'));
     }
-
-    private function createHandler($config, ContainerBuilder $container) {
-        // Custom handler service
-        if (isset($config['id'])) {
-            return new Reference($config['id']);
-        }
-    }
 }
