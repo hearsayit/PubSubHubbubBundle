@@ -18,21 +18,13 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-namespace Hearsay\PubSubHubbubBundle\Topic;
+namespace Hearsay\PubSubHubbubBundle\Exception;
 
 /**
- * Interface implemented by objects which can fetch topics based on their
- * identifier.
- * @package HearsayPubSubHubbubBundle
- * @subpackage Topic
+ * Exception thrown when a topic provider cannot uniquely retrieve a topic by
+ * its identifier.
  * @author Kevin Montag <kevin@hearsay.it>
  */
-interface TopicProviderInterface {
+class NonUniqueIdException extends \Exception {
 
-    /**
-     * Get the topic associated with the given identifier.
-     * @param mixed $topicId The identifier.
-     * @return TopicInterface The topic.
-     */
-    public function getTopic($topicId);
 }

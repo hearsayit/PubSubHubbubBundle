@@ -68,7 +68,7 @@ class CallbackControllerTest extends \PHPUnit_Framework_TestCase {
                 ->will($this->returnValue($this->topic));
         $this->topic
                 ->expects($this->any())
-                ->method("getIdentifier")
+                ->method("getTopicId")
                 ->will($this->returnValue($this->identifier));
     }
 
@@ -93,7 +93,7 @@ class CallbackControllerTest extends \PHPUnit_Framework_TestCase {
         // And a topic that has an authentication secret
         $this->topic
                 ->expects($this->any())
-                ->method("getSecret")
+                ->method("getTopicSecret")
                 ->will($this->returnValue("secret"));
 
         // We should get a notification
@@ -125,7 +125,7 @@ class CallbackControllerTest extends \PHPUnit_Framework_TestCase {
         // But the topic has authentication info
         $this->topic
                 ->expects($this->any())
-                ->method("getSecret")
+                ->method("getTopicSecret")
                 ->will($this->returnValue("not null"));
 
         // We should never be notified
@@ -157,7 +157,7 @@ class CallbackControllerTest extends \PHPUnit_Framework_TestCase {
         // Topic has different authentication info
         $this->topic
                 ->expects($this->any())
-                ->method("getSecret")
+                ->method("getTopicSecret")
                 ->will($this->returnValue("good"));
 
         // We should never be notified
@@ -187,7 +187,7 @@ class CallbackControllerTest extends \PHPUnit_Framework_TestCase {
 
         $this->topic
                 ->expects($this->any())
-                ->method("getTopic")
+                ->method("getTopicUrl")
                 ->will($this->returnValue("http://rss.topic.com/"));
 
         $this->topic

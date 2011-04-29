@@ -32,7 +32,7 @@ interface TopicInterface {
      * Get the RSS or Atom URL for this topic.
      * @return string The URL.
      */
-    public function getTopic();
+    public function getTopicUrl();
 
     /**
      * Get the secret token which should be used for verifying server requests
@@ -40,13 +40,13 @@ interface TopicInterface {
      * @return string|null The secret token, or null if requests should not be
      * verified.
      */
-    public function getSecret();
+    public function getTopicSecret();
 
     /**
      * Get a unique identifier which can be used to retrieve this topic.
      * @return mixed A unique identifier.
      */
-    public function getIdentifier();
+    public function getTopicId();
 
     /**
      * Check whether we should respond affirmatively to subscription

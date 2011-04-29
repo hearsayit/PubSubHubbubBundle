@@ -75,13 +75,13 @@ class CallbackController {
 
     /**
      * Primary callback action for interactions with hubs.
-     * @param mixed $identifier The identifier for the topic relevant to this
+     * @param mixed $topicId The identifier for the topic relevant to this
      * request.
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function callbackAction($identifier) {
+    public function callbackAction($topicId) {
         // Get the topic for the request
-        $topic = $this->getTopicProvider()->getTopic($identifier);
+        $topic = $this->getTopicProvider()->getTopic($topicId);
 
         // Post parameters
         $post = $this->getRequest()->request;
@@ -105,7 +105,7 @@ class CallbackController {
             $contentType = $this->getRequest()->headers->get("Content-Type");
 
             // If appropriate, verify the sender of the notification
-            $secret = $topic->getSecret();
+            $secret = $topic->getTopicSecret();
             if ($secret !== null) {
                 // Get the signature from the header, which has the form sha1=signature
                 $header = $this->getRequest()->headers->get("X-Hub-Signature");

@@ -60,7 +60,9 @@ class CoreHubComponent extends AbstractHubComponent {
      * @return string The callback URL.
      */
     protected function getCallbackUrl(TopicInterface $topic) {
-        return $this->generator->generate($this->callbackRoute);
+        return $this->generator->generate($this->callbackRoute, array(
+            'topicId' => $topic->getTopicId(),
+        ));
     }
 
     /**
@@ -90,11 +92,11 @@ class CoreHubComponent extends AbstractHubComponent {
             } else {
                 $fields = array(
                     "hub.verify" => "sync",
-                    "hub.topic" => $topic->getTopic(),
+                    "hub.topic" => $topic->getTopicUrl(),
                     "hub.callback" => $this->getCallbackUrl($topic),
                 );
 
-                $secret = $topic->getSecret();
+                $secret = $topic->getTopicSecret();
                 if ($secret) {
                     // Must connect securely to use a topic secret
                     $scheme = \parse_url($hub->getUrl(), \PHP_URL_SCHEME);
