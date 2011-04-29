@@ -100,7 +100,7 @@ class Hub {
      * creating the request.
      * @return string The request response.
      */
-    public function makeRequest($mode, array $options) {
+    public function makeRequest($mode, array $options = array()) {
 
         // Set up the request
         $curl = $this->getCurlFactory()->createCurl($this->getUrl());

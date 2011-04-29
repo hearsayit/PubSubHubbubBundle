@@ -21,6 +21,7 @@
 namespace Hearsay\PubSubHubbubBundle\Tests\Hub;
 
 use Hearsay\PubSubHubbubBundle\Hub\Hub;
+use Hearsay\PubSubHubbubBundle\Web\Curl;
 
 /**
  * Unit tests for hub connections.
@@ -32,6 +33,16 @@ class HubTest extends \PHPUnit_Framework_TestCase {
 
     private function getMockCurl() {
         return $this->getMock('Hearsay\PubSubHubbubBundle\Web\Curl', array('exec', '__destruct'));
+    }
+
+    /**
+     * Get a constraint matcher object for a equality with a cURL handle object,
+     * regardless of changes made to the object after the constraint is created.
+     * @param Curl $curl The request object.
+     * @return \PHPUnit_Framework_Constraint_Attribute The constraint matcher.
+     */
+    private function equalsCurl(Curl $curl) {
+        return $this->attributeEqualTo('ch', $this->readAttribute($curl, 'ch'));
     }
 
     /**
@@ -78,7 +89,7 @@ class HubTest extends \PHPUnit_Framework_TestCase {
                 ->with($hub, 'test', array(
                     'opt' => 'def',
                     'opt2' => 'nonDef',
-                        ), $this->attributeEqualTo('ch', $this->readAttribute($curl, 'ch')));
+                        ), $this->equalsCurl($curl));
 
         $component2
                 ->expects($this->any())
@@ -102,11 +113,69 @@ class HubTest extends \PHPUnit_Framework_TestCase {
                 ->with($hub, 'test', array(
                     'option' => 'nonDefault',
                     'option2' => 'default2',
-                        ), $this->attributeEqualTo('ch', $this->readAttribute($curl, 'ch')));
+                        ), $this->equalsCurl($curl));
 
         $hub->makeRequest('test', array(
             'opt2' => 'nonDef',
             'option' => 'nonDefault',
         ));
     }
+
+    /**
+     * Make sure the component-provided POST fields are used when hub requests
+     * are made.
+     * @covers Hearsay\PubSubHubbubBundle\Hub\Hub
+     */
+    public function testComponentPostFieldsUsed() {
+        $curl = $this->getMockCurl();
+        $curlFactory = $this->getMock('Hearsay\PubSubHubbubBundle\Web\CurlFactory');
+        $curlFactory
+                ->expects($this->once())
+                ->method('createCurl')
+                ->with('http://test.url.com')
+                ->will($this->returnValue($curl));
+
+        $component1 = $this->getMock('Hearsay\PubSubHubbubBundle\Hub\HubComponentInterface');
+        $component2 = $this->getMock('Hearsay\PubSubHubbubBundle\Hub\HubComponentInterface');
+        $components = array($component1, $component2);
+
+        $hub = new Hub('http://test.url.com', $components, $curlFactory);
+
+        $component1
+                ->expects($this->any())
+                ->method('getOptions')
+                ->will($this->returnValue(array()));
+        $component2
+                ->expects($this->any())
+                ->method('getOptions')
+                ->will($this->returnValue(array()));
+
+        $component1
+                ->expects($this->any())
+                ->method('getParameters')
+                ->with($hub, 'test', array())
+                ->will($this->returnValue(array(
+                            'first' => 'First value',
+                        )));
+        $component2
+                ->expects($this->any())
+                ->method('getParameters')
+                ->with($hub, 'test', array())
+                ->will($this->returnValue(array(
+                            'second' => 'Second value',
+                            'third' => 'Third value',
+                        )));
+
+        // Make sure the parameters are present when the request is executed
+        $that = $this;
+        $curl
+                ->expects($this->once())
+                ->method('exec')
+                ->will($this->returnCallback(function() use ($that, $curl) {
+                                    $that->assertEquals(3, \count($curl->postFields));
+                                }));
+
+        $hub->makeRequest('test');
+    }
+
 }
