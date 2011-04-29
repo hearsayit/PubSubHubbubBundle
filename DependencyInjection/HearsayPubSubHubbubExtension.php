@@ -70,9 +70,9 @@ class HearsayPubSubHubbubExtension extends Extension {
         }
 
         // TODO: Other extensions
-        // 
-        // Add the extensions argument to our hub
-        $container->getDefinition('hearsay_pubsubhubbub.hub')->addArgument($extensions);        
+        // Add the extensions and factory arguments to our hub
+        $container->getDefinition('hearsay_pubsubhubbub.hub')->addArgument($extensions);
+        //$container->getDefinition('hearsay_pubsubhubbub.hub')->addArgument($container->get('hearsay_pubsubhubbub.curl_factory'));
     }
 
     private function createHandler($config, ContainerBuilder $container) {

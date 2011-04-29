@@ -33,6 +33,7 @@
             id="hearsay_pubsubhubbub.hub"
             class="Hearsay\PubSubHubbubBundle\Hub\Hub">
             <argument type="string">%hearsay_pubsubhubbub.hub_url%</argument>
+            <!-- Additional arguments added in extension code -->
         </service>
 
         <!-- Core hub component -->
@@ -66,5 +67,10 @@
             id="hearsay_pubsubhubbub.hub_subscriber"
             class="Hearsay\PubSubHubbubBundle\Hub\HubSubscriber" >
         </service>
+
+        <!-- Request factory -->
+        <service
+            id="hearsay_pubsubhubbub.curl_factory"
+            class="Hearsay\PubSubHubbubBundle\Web\CurlFactory" />
     </services>
 </container>

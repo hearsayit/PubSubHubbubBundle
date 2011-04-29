@@ -204,7 +204,7 @@ class CallbackControllerTest extends \PHPUnit_Framework_TestCase {
         $response = $controller->callbackAction($this->identifier);
 
         // And we should be successful
-        $this->assertTrue(200, $response->isNotFound());
+        $this->assertTrue($response->isSuccessful());
         $this->assertEquals("print this", $response->getContent());
     }
 

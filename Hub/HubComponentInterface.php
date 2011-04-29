@@ -21,6 +21,7 @@
 namespace Hearsay\PubSubHubbubBundle\Hub;
 
 use Hearsay\PubSubHubbubBundle\Topic\TopicInterface;
+use Hearsay\PubSubHubbubBundle\Web\Curl;
 
 /**
  * Interface for hub components.  Components are objects which understand how
@@ -62,7 +63,7 @@ interface HubComponentInterface {
      * request.
      * @param string $mode The hub.mode parameter for the request.
      * @param array $options The options passed in to the request.
-     * @param resource $ch The cURL handle for the request.
+     * @param Curl $request The cURL object for the request.
      */
-    public function modifyRequest(Hub $hub, $mode, array $options, resource $ch);
+    public function modifyRequest(Hub $hub, $mode, array $options, Curl $request);
 }

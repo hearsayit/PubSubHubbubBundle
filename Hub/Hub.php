@@ -20,6 +20,8 @@
 
 namespace Hearsay\PubSubHubbubBundle\Hub;
 
+use Hearsay\PubSubHubbubBundle\Web\CurlFactory;
+
 /**
  * Object representing a PubSubHubbub hub, with any number of supported
  * components for interaction with that hub.
@@ -34,22 +36,28 @@ class Hub {
      * @var string
      */
     private $url = null;
-
     /**
      * Components for handling requests to the hub.
      * @var array
      */
     private $components = null;
+    /**
+     * Factory to generate web requests.
+     * @var CurlFactory
+     */
+    private $curlFactory = null;
 
     /**
      * Standard constructor.
      * @param string $url The hub URL.
      * @param array $components The components to use for building requests to
      * the hub.
+     * @param CurlFactory $curlFactory The factory to generate web requests.
      */
-    public function __construct($url, array $components) {
+    public function __construct($url, array $components, CurlFactory $curlFactory) {
         $this->url = $url;
         $this->components = $components;
+        $this->curlFactory = $curlFactory;
     }
 
     /**
@@ -77,6 +85,14 @@ class Hub {
     }
 
     /**
+     * Get the factory for producing new web requests.
+     * @return CurlFactory The factory.
+     */
+    protected function getCurlFactory() {
+        return $this->curlFactory;
+    }
+
+    /**
      * Send a request to this hub.
      * @param string $mode The request type, e.g. the value of the hub.mode
      * POST parameter.
@@ -85,12 +101,11 @@ class Hub {
      * @return string The request response.
      */
     public function makeRequest($mode, array $options) {
+
         // Set up the request
-        $ch = \curl_init($this->getHubUrl());
-        \curl_setopt_array($ch, array(
-            \CURLOPT_POST => true,
-            \CURLOPT_RETURNTRANSFER => true,
-        ));
+        $curl = $this->getCurlFactory()->createCurl($this->getUrl());
+        $curl->post = true;
+        $curl->returnTransfer = true;
 
         // Build up the request via components
         // TODO: Detect conflicts?
@@ -108,14 +123,14 @@ class Hub {
             $fields = \array_merge($fields, $component->getParameters($this, $mode, $componentOptions));
 
             // Let the component modify the request handle
-            $component->modifyRequest($this, $mode, $componentOptions);
+            $component->modifyRequest($this, $mode, $componentOptions, $curl);
         }
 
         // Add the fields to the request
-        \curl_setopt($ch, \CURLOPT_POSTFIELDS, $fields);
+        $curl->postFields = $fields;
 
         // Execute it
-        $response = \curl_exec($ch);
+        $response = $curl->exec();
 
         return $response;
     }
