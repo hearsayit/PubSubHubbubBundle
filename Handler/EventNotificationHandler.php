@@ -60,7 +60,7 @@ class EventNotificationHandler implements NotificationHandlerInterface {
      * {@inheritdoc}
      */
     public function handle(TopicInterface $topic, $contentType, $content) {
-        $event = new NoficationReceivedEvent($topic, $contentType, $content);
+        $event = new NotificationReceivedEvent($topic, $contentType, $content);
         $this->getDispatcher()->dispatch(Events::onPushNotificationReceived, $event);
     }
 }
