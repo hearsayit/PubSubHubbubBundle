@@ -47,7 +47,7 @@ class HearsayPubSubHubbubExtension extends Extension {
         $configuration = new Configuration();
         $config = $processor->processConfiguration($configuration, $configs);
         $loader->load('hub.xml');
-
+ 
         // Set the hub URL
         $container->setParameter('hearsay_pubsubhubbub.hub_url', $config['hub']);
 
@@ -72,6 +72,6 @@ class HearsayPubSubHubbubExtension extends Extension {
         // TODO: Other extensions
         // Add the extensions and factory arguments to our hub
         $container->getDefinition('hearsay_pubsubhubbub.hub')->addArgument($extensions);
-        //$container->getDefinition('hearsay_pubsubhubbub.hub')->addArgument($container->get('hearsay_pubsubhubbub.curl_factory'));
+        $container->getDefinition('hearsay_pubsubhubbub.hub')->addArgument(new Reference('hearsay_pubsubhubbub.curl_factory'));
     }
 }
