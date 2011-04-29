@@ -1,4 +1,4 @@
 # Route definitions for the PubSubHubbub bundle
 pubsubhubbub:
     pattern:    /pubsubhubbub
-    defaults:   { _controller: HearsayPubSubHubbubBundle:Default:index }
+    defaults:   { _controller: hearsay_pubsubhubbub.callback_controller:index }

@@ -36,6 +36,15 @@
             <!-- Additional arguments added in extension code -->
         </service>
 
+	<service
+	    id="hearsay_pubsubhubbub.callback_controller"
+	    class="Hearsay\PubSubHubbubBundle\Controller\CallbackController"
+            public="false" >
+	    <argument type="service" id="hearsay_pubsubhubbub.topic_provider" />
+	    <argument type="service" id="hearsay_pubsubhubbub.notification_handler" />
+	    <argument type="service" id="request" />
+	</service>
+
         <!-- Core hub component -->
         <service
             id="hearsay_pubsubhubbub.core_component"
