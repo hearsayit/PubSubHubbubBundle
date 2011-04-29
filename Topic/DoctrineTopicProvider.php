@@ -24,9 +24,10 @@ use Doctrine\ORM\EntityManager;
 use Hearsay\PubSubHubbubBundle\Exception\NonUniqueIdException;
 
 /**
- * Description of DoctrineTopicProvider
- *
- * @author kevin
+ * Basic topic provider to pull topics from a database.
+ * @package HearsayPubSubHubbubBundle
+ * @subpackage Topic
+ * @author Kevin Montag <kevin@hearsay.it>
  */
 class DoctrineTopicProvider implements TopicProviderInterface {
 
