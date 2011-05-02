@@ -108,9 +108,8 @@ class CallbackController {
         $topic = $this->getTopicProvider()->getTopic($topicId);
 
         // Post parameters
-        $post = $this->getRequest()->request;
-
-        $mode = $post->get('hub.mode');
+        $get = $this->getRequest()->query;
+        $mode = $get->get('hub_mode');
         if ($mode == 'subscribe' || $mode == 'unsubscribe') {
             // This is a verification of a subscribe/unsubscribe request
             if (
@@ -121,7 +120,7 @@ class CallbackController {
                 $this->getLogger()->debug('Allowing ' . $mode .
                         ' request for topic ' . $topic->getTopicId() . ' (' .
                         $topic->getTopicUrl() . ')');
-                return new Response($post->get("hub.challenge"), 200);
+                return new Response($get->get("hub_challenge"), 200);
             } else {
                 // The request is not allowed
                 $this->getLogger()->warn('Rejecting illegal ' . $mode .

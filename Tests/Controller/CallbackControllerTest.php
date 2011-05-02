@@ -198,12 +198,7 @@ class CallbackControllerTest extends \PHPUnit_Framework_TestCase {
      * @covers Hearsay\PubSubHubbubBundle\Controller\CallbackController
      */
     public function testGoodSubscriptionVerified() {
-        $request = new Request(array(), array(
-                    "hub.mode" => "subscribe",
-                    "hub.topic" => "http://rss.topic.com/",
-                    "hub.challenge" => "print this",
-                    "hub.lease_seconds" => 100,
-                ));
+      $request = Request::create('/pubsubhubbub?hub.mode=subscribe&hub.topic=http://rss.topic.com&hub.challenge=print_this&hub.lease_seconds=100', 'GET');
 
         $this->topic
                 ->expects($this->any())
@@ -225,7 +220,7 @@ class CallbackControllerTest extends \PHPUnit_Framework_TestCase {
 
         // And we should be successful
         $this->assertTrue($response->isSuccessful());
-        $this->assertEquals("print this", $response->getContent());
+        $this->assertEquals("print_this", $response->getContent());
     }
 
 }
