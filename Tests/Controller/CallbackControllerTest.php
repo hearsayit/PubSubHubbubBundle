@@ -198,29 +198,32 @@ class CallbackControllerTest extends \PHPUnit_Framework_TestCase {
      * @covers Hearsay\PubSubHubbubBundle\Controller\CallbackController
      */
     public function testGoodSubscriptionVerified() {
-      $request = Request::create('/pubsubhubbub?hub.mode=subscribe&hub.topic=http://rss.topic.com&hub.challenge=print_this&hub.lease_seconds=100', 'GET');
+        $request = Request::create('/pubsubhubbub?hub.mode=subscribe&' .
+                        'hub.topic=http://rss.topic.com&' .
+                        'hub.challenge=print_this&' .
+                        'hub.lease_seconds=100');
 
         $this->topic
                 ->expects($this->any())
-                ->method("getTopicUrl")
-                ->will($this->returnValue("http://rss.topic.com/"));
+                ->method('getTopicUrl')
+                ->will($this->returnValue('http://rss.topic.com/'));
 
         $this->topic
                 ->expects($this->any())
-                ->method("isSubscribeAllowed")
+                ->method('isSubscribeAllowed')
                 ->will($this->returnValue(true));
 
         // We shouldn't receive a notification
         $this->notificationHandler
                 ->expects($this->never())
-                ->method("handle");
+                ->method('handle');
 
         $controller = new CallbackController($this->topicProvider, $this->notificationHandler, $this->getContainer($request), $this->logger);
         $response = $controller->callbackAction($this->identifier);
 
         // And we should be successful
         $this->assertTrue($response->isSuccessful());
-        $this->assertEquals("print_this", $response->getContent());
+        $this->assertEquals('print_this', $response->getContent());
     }
 
 }
