@@ -43,6 +43,7 @@
             <argument type="service" id="hearsay_pubsubhubbub.topic_provider" />
             <argument type="service" id="hearsay_pubsubhubbub.notification_handler" />
             <argument type="service" id="service_container" />
+            <argument type="service" id="logger" />
         </service>
 
         <!-- Doctrine topic provider -->

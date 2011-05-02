@@ -25,6 +25,7 @@ use Hearsay\PubSubHubbubBundle\Topic\TopicProviderInterface;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Bundle\MonologBundle\Logger\Logger;
 
 /**
  * Controller service to handle requests from PubSubHubbub hubs.
@@ -34,9 +35,22 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class CallbackController {
 
+    /**
+     * @var TopicProviderInterface
+     */
     private $topicProvider = null;
+    /**
+     * @var NotificationHandlerInterface
+     */
     private $notificationHandler = null;
+    /**
+     * @var Container
+     */
     private $container = null;
+    /**
+     * @var Logger
+     */
+    private $logger = null;
 
     /**
      * Standard constructor.
@@ -44,10 +58,11 @@ class CallbackController {
      * @param NotificationHandlerInterface $notificationHandler
      * @param Container $container
      */
-    public function __construct(TopicProviderInterface $topicProvider, NotificationHandlerInterface $notificationHandler, Container $container) {
+    public function __construct(TopicProviderInterface $topicProvider, NotificationHandlerInterface $notificationHandler, Container $container, Logger $logger) {
         $this->topicProvider = $topicProvider;
         $this->notificationHandler = $notificationHandler;
         $this->container = $container;
+        $this->logger = $logger;
     }
 
     /**
@@ -75,6 +90,14 @@ class CallbackController {
     }
 
     /**
+     * Get the logger.
+     * @return Logger The logger.
+     */
+    protected function getLogger() {
+        return $this->logger;
+    }
+
+    /**
      * Primary callback action for interactions with hubs.
      * @param mixed $topicId The identifier for the topic relevant to this
      * request.
@@ -87,29 +110,35 @@ class CallbackController {
         // Post parameters
         $post = $this->getRequest()->request;
 
-        $mode = $post->get("hub.mode");
-        if ($mode == "subscribe" || $mode == "unsubscribe") {
+        $mode = $post->get('hub.mode');
+        if ($mode == 'subscribe' || $mode == 'unsubscribe') {
             // This is a verification of a subscribe/unsubscribe request
             if (
-                    ($mode == "subscribe" && $topic->isSubscribeAllowed()) ||
-                    ($mode == "unsubscribe" && $topic->isUnsubscribeAllowed())) {
+                    ($mode == 'subscribe' && $topic->isSubscribeAllowed()) ||
+                    ($mode == 'unsubscribe' && $topic->isUnsubscribeAllowed())) {
 
                 // The request is allowed
+                $this->getLogger()->debug('Allowing ' . $mode .
+                        ' request for topic ' . $topic->getTopicId() . ' (' .
+                        $topic->getTopicUrl() . ')');
                 return new Response($post->get("hub.challenge"), 200);
             } else {
                 // The request is not allowed
-                return new Response("Not Found", 404);
+                $this->getLogger()->warn('Rejecting illegal ' . $mode .
+                        ' request for topic ' . $topic->getTopicId() . ' (' .
+                        $topic->getTopicUrl() . ')');
+                return new Response('', 404);
             }
         } else {
             // Otherwise, this is a push notification
             $content = $this->getRequest()->getContent();
-            $contentType = $this->getRequest()->headers->get("Content-Type");
+            $contentType = $this->getRequest()->headers->get('Content-Type');
 
             // If appropriate, verify the sender of the notification
             $secret = $topic->getTopicSecret();
             if ($secret !== null) {
                 // Get the signature from the header, which has the form sha1=signature
-                $header = $this->getRequest()->headers->get("X-Hub-Signature");
+                $header = $this->getRequest()->headers->get('X-Hub-Signature');
                 $matches = array();
                 \preg_match("/^sha1=(.+)/", $header, $matches);
 
@@ -118,11 +147,14 @@ class CallbackController {
                     $provided = $matches[1];
                 }
 
-                $hmac = \hash_hmac("sha1", $content, $secret);
+                $hmac = \hash_hmac('sha1', $content, $secret);
 
                 if ($provided !== $hmac) {
                     // Silently fail
-                    return new Response("Not Found", 404);
+                    $this->getLogger()->warn('Ignoring unauthenticated push ' .
+                            'notification for topic ' . $topic->getTopicId() .
+                            ' (' . $topic->getTopicUrl() . ')');
+                    return new Response('', 404);
                 }
             }
 
