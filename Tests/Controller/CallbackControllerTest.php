@@ -44,6 +44,11 @@ class CallbackControllerTest extends \PHPUnit_Framework_TestCase {
      */
     protected $notificationHandler = null;
     /**
+     * Mock logger, initialized for each test.
+     * @var \Symfony\Bundle\MonologBundle\Logger\Logger
+     */
+    protected $logger = null;
+    /**
      * Mock topic, initialized for each test.
      * @var \Hearsay\PubSubHubbubBundle\Topic\TopicInterface
      */
@@ -72,6 +77,9 @@ class CallbackControllerTest extends \PHPUnit_Framework_TestCase {
     protected function setUp() {
         $this->topicProvider = $this->getMock('Hearsay\PubSubHubbubBundle\Topic\TopicProviderInterface');
         $this->notificationHandler = $this->getMock('Hearsay\PubSubHubbubBundle\Handler\NotificationHandlerInterface');
+        $this->logger = $this->getMockBuilder('Symfony\Bundle\MonologBundle\Logger\Logger')
+                        ->disableOriginalConstructor()
+                        ->getMock();
         $this->topic = $this->getMock('Hearsay\PubSubHubbubBundle\Topic\TopicInterface');
         $this->topicProvider
                 ->expects($this->any())
@@ -114,7 +122,7 @@ class CallbackControllerTest extends \PHPUnit_Framework_TestCase {
                 ->method("handle")
                 ->with($this->topic, "contentType", "Whatever");
 
-        $controller = new CallbackController($this->topicProvider, $this->notificationHandler, $this->getContainer($request));
+        $controller = new CallbackController($this->topicProvider, $this->notificationHandler, $this->getContainer($request), $this->logger);
         $response = $controller->callbackAction($this->identifier);
 
         // And we should see a successful response
@@ -145,7 +153,7 @@ class CallbackControllerTest extends \PHPUnit_Framework_TestCase {
                 ->expects($this->never())
                 ->method("handle");
 
-        $controller = new CallbackController($this->topicProvider, $this->notificationHandler, $this->getContainer($request));
+        $controller = new CallbackController($this->topicProvider, $this->notificationHandler, $this->getContainer($request), $this->logger);
         $response = $controller->callbackAction($this->identifier);
 
         // And we should silently fail
@@ -177,7 +185,7 @@ class CallbackControllerTest extends \PHPUnit_Framework_TestCase {
                 ->expects($this->never())
                 ->method("handle");
 
-        $controller = new CallbackController($this->topicProvider, $this->notificationHandler, $this->getContainer($request));
+        $controller = new CallbackController($this->topicProvider, $this->notificationHandler, $this->getContainer($request), $this->logger);
         $response = $controller->callbackAction($this->identifier);
 
         // And we should silently fail
@@ -212,7 +220,7 @@ class CallbackControllerTest extends \PHPUnit_Framework_TestCase {
                 ->expects($this->never())
                 ->method("handle");
 
-        $controller = new CallbackController($this->topicProvider, $this->notificationHandler, $this->getContainer($request));
+        $controller = new CallbackController($this->topicProvider, $this->notificationHandler, $this->getContainer($request), $this->logger);
         $response = $controller->callbackAction($this->identifier);
 
         // And we should be successful
