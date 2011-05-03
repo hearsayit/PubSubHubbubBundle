@@ -26,6 +26,9 @@ class SubscribeCommand extends Command {
                     new InputArgument('topic_id', InputArgument::REQUIRED, 'ID of the topic to subscribe to/unsubscribe from'),
                 ))
                 ->setDescription('Subscribe to (or unsubscribe from) to a PubSubHubbub topic.')
+                ->addOption('host', null, InputOption::VALUE_OPTIONAL, 'The host to use in generating callback URLs')
+                ->addOption('base', null, InputOption::VALUE_OPTIONAL, 'The base URL to use in generating callback URLs')
+                ->addOption('scheme', null, InputOption::VALUE_OPTIONAL, 'The scheme (e.g. https) to use in generating callback URLs')
                 ->addOption('unsubscribe', 'u', InputOption::VALUE_NONE,
                         'Unsubscribe from the topic instead of subscribing')
                 ->setHelp(<<<EOT
@@ -44,6 +47,19 @@ EOT
      * {@inheritdoc}
      */
     public function execute(InputInterface $input, OutputInterface $output) {
+        // Set up the base URL
+        $context = $this->container->get('router')->getContext();
+        
+        if ($input->getOption('base')) {
+            $context->setBaseUrl($input->getOption('base'));
+        }
+        if ($input->getOption('host')) {
+            $context->setHost($input->getOption('host'));
+        }
+        if ($input->getOption('scheme')) {
+            $context->setScheme($input->getOption('scheme'));
+        }
+
         $subscriber = $this->container->get('hearsay_pubsubhubbub.hub_subscriber');
         $response = null;
 
