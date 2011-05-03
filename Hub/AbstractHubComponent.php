@@ -20,6 +20,8 @@
 
 namespace Hearsay\PubSubHubbubBundle\Hub;
 
+use Hearsay\PubSubHubbubBundle\Web\Curl;
+
 /**
  * Simple base class for hub components; provided as a convenience for
  * implementing components which only perform interesting work for some of the
@@ -47,7 +49,7 @@ class AbstractHubComponent implements HubComponentInterface {
     /**
      * {@inheritdoc}
      */
-    public function modifyRequest(Hub $hub, $mode, array $options, resource $ch) {
+    public function modifyRequest(Hub $hub, $mode, array $options, Curl $request) {
         
     }
 }

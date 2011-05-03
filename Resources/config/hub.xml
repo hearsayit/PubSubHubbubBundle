@@ -50,14 +50,15 @@
         <!-- Doctrine topic provider -->
         <service
             id="hearsay_pubsubhubbub.doctrine_topic_provider"
-            class="Hearsay\PubSubHubbubBundle\Topic\DoctrineTopicProvider">
+            class="Hearsay\PubSubHubbubBundle\Topic\DoctrineTopicProvider"
+            public="false" >
             <!-- Arguments added in extension code -->
         </service>
 
         <!-- Core hub component -->
         <service
             id="hearsay_pubsubhubbub.core_component"
-            class="Hearsay\PubSubHubbub\Hub\CoreHubComponent"
+            class="Hearsay\PubSubHubbubBundle\Hub\CoreHubComponent"
             public="false">
             <argument type="service" id="router" />
             <argument type="string">%hearsay_pubsubhubbub.callback_route%</argument>
@@ -66,7 +67,7 @@
         <!-- Superfeedr hub component -->
         <service
             id="hearsay_pubsubhubbub.superfeedr_component"
-            class="Hearsay\PubSubHubbub\Hub\SuperfeedrComponent"
+            class="Hearsay\PubSubHubbubBundle\Hub\SuperfeedrComponent"
             public="false">
             <argument type="string">%hearsay_pubsubhubbub.superfeedr_username%</argument>
             <argument type="string">%hearsay_pubsubhubbub.superfeedr_password%</argument>
@@ -84,11 +85,13 @@
         <service
             id="hearsay_pubsubhubbub.hub_subscriber"
             class="Hearsay\PubSubHubbubBundle\Hub\HubSubscriber" >
+            <argument type="service" id="hearsay_pubsubhubbub.hub" />
         </service>
 
         <!-- Request factory -->
         <service
             id="hearsay_pubsubhubbub.curl_factory"
-            class="Hearsay\PubSubHubbubBundle\Web\CurlFactory" />
+            class="Hearsay\PubSubHubbubBundle\Web\CurlFactory"
+            public="false" />
     </services>
 </container>

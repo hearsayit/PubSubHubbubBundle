@@ -172,7 +172,11 @@ class HubTest extends \PHPUnit_Framework_TestCase {
                 ->expects($this->once())
                 ->method('exec')
                 ->will($this->returnCallback(function() use ($that, $curl) {
-                                    $that->assertEquals(3, \count($curl->postFields));
+                                    $that->assertEquals(4, \count($curl->postFields));
+                                    $that->assertEquals('First value', $curl->postFields['first']);
+                                    $that->assertEquals('Second value', $curl->postFields['second']);
+                                    $that->assertEquals('Third value', $curl->postFields['third']);
+                                    $that->assertEquals('test', $curl->postFields['hub.mode']);
                                 }));
 
         $hub->makeRequest('test');

@@ -23,7 +23,7 @@ namespace Hearsay\PubSubHubbubBundle\Hub;
 use Hearsay\PubSubHubbubBundle\Exception\BadOptionException;
 use Hearsay\PubSubHubbubBundle\Exception\SecurityException;
 use Hearsay\PubSubHubbubBundle\Topic\TopicInterface;
-use Symfony\Component\Routing\RouterInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
  * Component providing subscribe/unsubscribe functionality for the bundle.
@@ -62,7 +62,7 @@ class CoreHubComponent extends AbstractHubComponent {
     protected function getCallbackUrl(TopicInterface $topic) {
         return $this->generator->generate($this->callbackRoute, array(
             'topicId' => $topic->getTopicId(),
-        ));
+        ), true);
     }
 
     /**
@@ -106,7 +106,10 @@ class CoreHubComponent extends AbstractHubComponent {
                         throw new SecurityException("Hub secret values may only be sent over a secure connection.");
                     }
                 }
+                return $fields;
             }
+        } else {
+            return array();
         }
     }
 

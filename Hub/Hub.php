@@ -114,7 +114,7 @@ class Hub {
             // Get component-specific options from the global list, falling back on component defaults
             $componentOptions = $component->getOptions($this, $mode);
             foreach ($options as $option => $value) {
-                if (isset($componentOptions[$option])) {
+                if (\array_key_exists($option, $componentOptions)) {
                     $componentOptions[$option] = $value;
                 }
             }
@@ -125,6 +125,9 @@ class Hub {
             // Let the component modify the request handle
             $component->modifyRequest($this, $mode, $componentOptions, $curl);
         }
+
+        // Add the mode
+        $fields['hub.mode'] = $mode;
 
         // Add the fields to the request
         $curl->postFields = $fields;

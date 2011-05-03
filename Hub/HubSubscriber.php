@@ -20,13 +20,11 @@
 
 namespace Hearsay\PubSubHubbubBundle\Hub;
 
-use Hearsay\PubSubHubbubBundle\Exception\SecurityException;
 use Hearsay\PubSubHubbubBundle\Topic\TopicInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
- * Helper to manage subscriptions on a PubSubHubbub hub which implements at
- * least the core spec.
+ * Simple helper to manage subscriptions on a PubSubHubbub hub which implements
+ * the core spec.
  * @package HearsayPubSubHubbubBundle
  * @subpackage Hub
  * @author Kevin Montag <kevin@hearsay.it>
@@ -34,101 +32,46 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class HubSubscriber {
 
     /**
-     * The URL of the hub we're subscribing/unsubscribing.
-     * @var string
+     * The hub we're subscribing/unsubscribing from.
+     * @var Hub
      */
-    private $hubUrl = null;
-    /**
-     * @var UrlGeneratorInterface
-     */
-    private $generator = null;
-    /**
-     * The subscriber extensions to apply to requests.
-     * @var array
-     */
-    private $extensions = null;
-    /**
-     * Name of the route to use for callback URLs.
-     * @var string
-     */
-    private $callbackRoute = null;
+    private $hub = null;
 
     /**
      * Standard constructor.
-     * @param string $hubUrl The URL of the hub we're subscribing/unsubscribing.
-     * @param UrlGeneratorInterface $generator Helper to generate callback URLs.
-     * @param string $callbackRoute Name of the callback route.
+     * @param Hub $hub The hub to subscribe/unsubscribe.
      */
-    public function __construct($hubUrl, UrlGeneratorInterface $generator, array $extensions = array(), $callbackRoute = "pubsubhubbub") {
-        $this->hubUrl = $hubUrl;
-        $this->generator = $generator;
-        $this->extensions = $extensions;
-        $this->callbackRoute = $callbackRoute;
+    public function __construct(Hub $hub) {
+        $this->hub = $hub;
     }
 
     /**
-     * Get the URL of the hub we're interfacing with.
-     * @return string The URL.
+     * Get the hub to which subscriptions are being applied.
+     * @return Hub The hub.
      */
-    public function getHubUrl() {
-        return $this->hubUrl;
+    protected function getHub() {
+        return $this->hub;
     }
 
     /**
-     * Get the callback URL which should be used for handling notifications and
-     * verifying requests related to the given topic.
-     * @param TopicInterface The topic being processed.
-     * @return string The callback URL.
+     * Subscribe to the given topic.
+     * @param TopicInterface $topic The topic.
+     * @param array $options Any additional options to provide to the request.
+     * @return string The server's response.
      */
-    protected function getCallbackUrl(TopicInterface $topic) {
-        return $this->generator->generate($this->callbackRoute);
+    public function subscribe(TopicInterface $topic, array $options = array()) {
+        $options['topic'] = $topic;
+        return $this->getHub()->makeRequest('subscribe', $options);
     }
 
     /**
-     * Get the extensions which should be applied to requests.
-     * @return array The extensions.
+     * Unsubscribe from the given topic.
+     * @param TopicInterface $topic The topic.
+     * @param array $options Any additional options to provide to the request.
+     * @return string The server's response.
      */
-    protected function getExtensions() {
-        return $this->extensions;
+    public function unsubscribe(TopicInterface $topic, array $options = array()) {
+        $options['topic'] = $topic;
+        return $this->getHub()->makeRequest('unsubscribe', $options);
     }
-
-    /**
-     * Sign up to receive updates, or unsubscribe from updates, for a particular
-     * topic on this hub.
-     * @param bool $subscribe Whether to subscribe (true) or unsubscribe
-     * (false).
-     * @param TopicInterface $topic The topic to subscribe or unsubscribe.
-     */
-    public function changeSubscriptionState($subscribe, TopicInterface $topic) {
-        // Set up the request
-        $ch = \curl_init($this->getHubUrl());
-        \curl_setopt_array($ch, array(
-            \CURLOPT_POST => true,
-            \CURLOPT_RETURNTRANSFER => true,
-        ));
-
-        $fields = array(
-            "hub.verify" => "sync",
-            "hub.topic" => $topic->getTopic(),
-            "hub.callback" => $this->getCallbackUrl($topic),
-        );
-
-        $secret = $topic->getSecret();
-        if ($secret) {
-            // Must connect securely to use a topic secret
-            $scheme = \parse_url($this->getHubUrl(), \PHP_URL_SCHEME);
-            if ($scheme === "https") {
-                $fields["hub.secret"] = $secret;
-            } else {
-                throw new SecurityException("Hub secret values may only be sent over a secure connection.");
-            }
-        }
-        $fields["hub.mode"] = $subscribe ? "subscribe" : "unsubscribe";
-
-        \curl_setopt($ch, \CURLOPT_POSTFIELDS, $fields);
-
-        // Execute it
-        $response = \curl_exec($ch);
-    }
-
 }

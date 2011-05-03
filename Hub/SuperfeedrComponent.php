@@ -20,6 +20,8 @@
 
 namespace Hearsay\PubSubHubbubBundle\Hub;
 
+use Hearsay\PubSubHubbubBundle\Web\Curl;
+
 /**
  * Hub component allowing for interaction with the Superfeedr hub.
  * @link http://superfeedr.com/
@@ -83,9 +85,9 @@ class SuperfeedrComponent extends AbstractHubComponent {
     /**
      * {@inheritdoc}
      */
-    public function modifyRequest(Hub $hub, $mode, array $options, resource $ch) {
+    public function modifyRequest(Hub $hub, $mode, array $options, Curl $request) {
         // Use HTTP basic authentication for the request
-        \curl_setopt($ch, \CURLOPT_HTTPAUTH, \CURLAUTH_BASIC);
-        \curl_setopt($ch, \CURLOPT_USERPWD, "$this->username:$this->password");
+        $request->httpAuth = \CURLAUTH_BASIC;
+        $request->userPwd = "$this->username:$this->password";
     }
 }
