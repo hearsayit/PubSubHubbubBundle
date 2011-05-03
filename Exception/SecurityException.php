@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the Hearsay PubSubHubbub bundle.
  *
@@ -27,4 +28,5 @@ namespace Hearsay\PubSubHubbubBundle\Exception;
  * @author Kevin Montag <kevin@hearsay.it>
  */
 class SecurityException extends \Exception {
+
 }

@@ -55,25 +55,42 @@ class HubSubscriber {
     }
 
     /**
+     * Internal helper to make either a subscribe or unsubscribe request.
+     * @param string $mode "subscribe" or "unsubscribe"
+     * @param TopicInterface $topic The topic to subscribe/unsubscribe.
+     * @param array $options Any additional options to pass into the request.
+     * @return string The server's response.
+     * @throws SubscriptionNotVerifiedException
+     */
+    private function makeSubscriptionRequest($mode, TopicInterface $topic, array $options) {
+        $options['topic'] = $topic;
+        $curl = $this->getHub()->makeRequest($mode, $options);
+
+        // Check the response code
+        if ($curl->info('http_code') !== 204) {
+            $fields = $curl->postFields;
+            $message = 'Server returned code ' . $curl->info('http_code') .
+                    ' with response: "' . $curl->fetch() .
+                    '".  Request parameters were [';
+            foreach ($fields as $field => $value) {
+                $message .= $field . ' => ' . $value . ', ';
+            }
+            $message .= '].';
+            throw new SubscriptionNotVerifiedException($message);
+        }
+
+        return $curl->fetch();
+    }
+
+    /**
      * Subscribe to the given topic.
      * @param TopicInterface $topic The topic.
      * @param array $options Any additional options to provide to the request.
      * @return string The server's response.
+     * @throws SubscriptionNotVerifiedException
      */
     public function subscribe(TopicInterface $topic, array $options = array()) {
-        return $this->makeSubscriptionRequest('subscribe', $topic, $options);        
-    }
-
-    private function makeSubscriptionRequest($mode, TopicInterface $topic, array $options = array()) {
-        $options['topic'] = $topic;
-        $curl = $this->getHub()->makeRequest($mode, $options);
-
-	// Check the response code
-	if ($curl->info('http_code') !== 204) {
-	  throw new SubscriptionNotVerifiedException('Server returned code ' . $curl->info('http_code') . ' with response: "' . $curl->fetch() . '"');
-	}
-
-	return $curl->fetch();
+        return $this->makeSubscriptionRequest('subscribe', $topic, $options);
     }
 
     /**
@@ -81,8 +98,10 @@ class HubSubscriber {
      * @param TopicInterface $topic The topic.
      * @param array $options Any additional options to provide to the request.
      * @return string The server's response.
+     * @throws SubscriptionNotVerifiedException
      */
     public function unsubscribe(TopicInterface $topic, array $options = array()) {
         return $this->makeSubscriptionRequest('unsubscribe', $topic, $options);
     }
+
 }
