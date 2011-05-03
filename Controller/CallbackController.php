@@ -132,7 +132,6 @@ class CallbackController {
         } else {
             // Otherwise, this is a push notification
             $content = $this->getRequest()->getContent();
-            $contentType = $this->getRequest()->headers->get('Content-Type');
 
             // If appropriate, verify the sender of the notification
             $secret = $topic->getTopicSecret();
@@ -159,7 +158,7 @@ class CallbackController {
             }
 
             // If we're here, the notification is allowed
-            $this->getNotificationHandler()->handle($topic, $contentType, $content);
+            $this->getNotificationHandler()->handle($topic, $this->getRequest()->headers, $content);
 
             // TODO: X-On-Behalf-Of support
             return new Response('Notification received!', 200);

@@ -21,6 +21,7 @@
 namespace Hearsay\PubSubHubbubBundle\Handler;
 
 use Hearsay\PubSubHubbubBundle\Topic\TopicInterface;
+use Symfony\Component\HttpFoundation\HeaderBag;
 
 /**
  * Interface for objects which can handle hub push notifications.
@@ -35,9 +36,8 @@ interface NotificationHandlerInterface {
      * implementing classes should avoid performing time-consuming operations
      * inside this function.
      * @param TopicInterface $topic The topic related to the push.
-     * @param string $contentType The value of the Content-Type header of the
-     * notification request.
+     * @param HeaderBag $headers The headers sent along with the request.
      * @param string $content The body of the notification request.
      */
-    public function handle(TopicInterface $topic, $contentType, $content);
+    public function handle(TopicInterface $topic, HeaderBag $headers, $content);
 }

@@ -34,10 +34,11 @@ class NotificationReceivedEventTest extends \PHPUnit_Framework_TestCase {
      */
     public function testDataStored() {
         $topic = $this->getMock('Hearsay\PubSubHubbubBundle\Topic\TopicInterface');
-        $event = new NotificationReceivedEvent($topic, "what", "now");
+        $headers = $this->getMock('Symfony\Component\HttpFoundation\HeaderBag');
+        $event = new NotificationReceivedEvent($topic, $headers, "now");
 
         $this->assertEquals($topic, $event->getTopic());
-        $this->assertEquals("what", $event->getContentType());
+        $this->assertEquals($headers, $event->getHeaders());
         $this->assertEquals("now", $event->getContent());
     }
 }

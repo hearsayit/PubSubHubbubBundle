@@ -24,6 +24,7 @@ use Hearsay\PubSubHubbubBundle\Events;
 use Hearsay\PubSubHubbubBundle\Event\NotificationReceivedEvent;
 use Hearsay\PubSubHubbubBundle\Topic\TopicInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpFoundation\HeaderBag;
 
 /**
  * Simple notification handler which dispatches an event upon receiving a
@@ -59,8 +60,8 @@ class EventNotificationHandler implements NotificationHandlerInterface {
     /**
      * {@inheritdoc}
      */
-    public function handle(TopicInterface $topic, $contentType, $content) {
-        $event = new NotificationReceivedEvent($topic, $contentType, $content);
+    public function handle(TopicInterface $topic, HeaderBag $headers, $content) {
+        $event = new NotificationReceivedEvent($topic, $headers, $content);
         $this->getDispatcher()->dispatch(Events::onPushNotificationReceived, $event);
     }
 }

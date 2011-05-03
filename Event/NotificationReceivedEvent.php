@@ -22,6 +22,7 @@ namespace Hearsay\PubSubHubbubBundle\Event;
 
 use Hearsay\PubSubHubbubBundle\Topic\TopicInterface;
 use Symfony\Component\EventDispatcher\Event;
+use Symfony\Component\HttpFoundation\HeaderBag;
 
 /**
  * Event signaling that a push notification has been received.
@@ -36,9 +37,9 @@ class NotificationReceivedEvent extends Event {
      */
     private $topic = null;
     /**
-     * @var string
+     * @var HeaderBag
      */
-    private $contentType = null;
+    private $headers = null;
     /**
      * @var string
      */
@@ -47,12 +48,12 @@ class NotificationReceivedEvent extends Event {
     /**
      * Standard constructor.
      * @param TopicInterface $topic The topic which received the notification.
-     * @param string $contentType The content type of the notification.
+     * @param HeaderBag $headers The headers of the notification.
      * @param string $content The content received.
      */
-    public function __construct(TopicInterface $topic, $contentType, $content) {
+    public function __construct(TopicInterface $topic, HeaderBag $headers, $content) {
         $this->topic = $topic;
-        $this->contentType = $contentType;
+        $this->headers = $headers;
         $this->content = $content;
     }
 
@@ -65,12 +66,11 @@ class NotificationReceivedEvent extends Event {
     }
 
     /**
-     * Get the content type of the notification, as specified by the
-     * notification's Content-Type header.
-     * @return string The content type, e.g. application/atom+xml.
+     * Get the headers passed in with the notification.
+     * @return HeaderBag The headers.
      */
-    public function getContentType() {
-        return $this->contentType;
+    public function getHeaders() {
+        return $this->headers;
     }
 
     /**

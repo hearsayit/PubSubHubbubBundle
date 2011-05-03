@@ -120,7 +120,7 @@ class CallbackControllerTest extends \PHPUnit_Framework_TestCase {
         $this->notificationHandler
                 ->expects($this->once())
                 ->method("handle")
-                ->with($this->topic, "contentType", "Whatever");
+                ->with($this->topic, $request->headers, "Whatever");
 
         $controller = new CallbackController($this->topicProvider, $this->notificationHandler, $this->getContainer($request), $this->logger);
         $response = $controller->callbackAction($this->identifier);

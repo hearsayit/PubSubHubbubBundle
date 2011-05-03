@@ -32,7 +32,7 @@ use Hearsay\PubSubHubbubBundle\Web\Curl;
 class HubTest extends \PHPUnit_Framework_TestCase {
 
     private function getMockCurl() {
-        return $this->getMock('Hearsay\PubSubHubbubBundle\Web\Curl', array('exec', '__destruct'));
+        return $this->getMock('Hearsay\PubSubHubbubBundle\Web\Curl', array('fetch', '__destruct'));
     }
 
     /**
@@ -170,7 +170,7 @@ class HubTest extends \PHPUnit_Framework_TestCase {
         $that = $this;
         $curl
                 ->expects($this->once())
-                ->method('exec')
+                ->method('fetch')
                 ->will($this->returnCallback(function() use ($that, $curl) {
                                     $that->assertEquals(4, \count($curl->postFields));
                                     $that->assertEquals('First value', $curl->postFields['first']);
