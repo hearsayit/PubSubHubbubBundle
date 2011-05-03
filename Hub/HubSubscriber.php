@@ -20,6 +20,7 @@
 
 namespace Hearsay\PubSubHubbubBundle\Hub;
 
+use Hearsay\PubSubHubbubBundle\Exception\SubscriptionNotVerifiedException;
 use Hearsay\PubSubHubbubBundle\Topic\TopicInterface;
 
 /**
@@ -60,8 +61,19 @@ class HubSubscriber {
      * @return string The server's response.
      */
     public function subscribe(TopicInterface $topic, array $options = array()) {
+        return $this->makeSubscriptionRequest('subscribe', $topic, $options);        
+    }
+
+    private function makeSubscriptionRequest($mode, TopicInterface $topic, array $options = array()) {
         $options['topic'] = $topic;
-        return $this->getHub()->makeRequest('subscribe', $options);
+        $curl = $this->getHub()->makeRequest($mode, $options);
+
+	// Check the response code
+	if ($curl->info('http_code') !== 204) {
+	  throw new SubscriptionNotVerifiedException('Server returned code ' . $curl->info('http_code') . ' with response: "' . $curl->fetch() . '"');
+	}
+
+	return $curl->fetch();
     }
 
     /**
@@ -71,7 +83,6 @@ class HubSubscriber {
      * @return string The server's response.
      */
     public function unsubscribe(TopicInterface $topic, array $options = array()) {
-        $options['topic'] = $topic;
-        return $this->getHub()->makeRequest('unsubscribe', $options);
+        return $this->makeSubscriptionRequest('unsubscribe', $topic, $options);
     }
 }

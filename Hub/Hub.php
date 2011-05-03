@@ -98,7 +98,8 @@ class Hub {
      * POST parameter.
      * @param array $options The options to pass in to the hub components for
      * creating the request.
-     * @return string The request response.
+     * @return Hearsay\PubSubHubbubBundle\Web\Curl The fetched cURL object for
+     * the executed request.
      */
     public function makeRequest($mode, array $options = array()) {
 
@@ -133,9 +134,9 @@ class Hub {
         $curl->postFields = $fields;
 
         // Execute it
-        $response = $curl->exec();
+        $curl->fetch();
 
-        return $response;
+        return $curl;
     }
 
 }
