@@ -23,7 +23,9 @@ namespace Hearsay\PubSubHubbubBundle\Hub;
 use Hearsay\PubSubHubbubBundle\Exception\BadOptionException;
 use Hearsay\PubSubHubbubBundle\Exception\SecurityException;
 use Hearsay\PubSubHubbubBundle\Topic\TopicInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Routing\RequestContext;
+use Symfony\Component\Routing\Router;
+use Symfony\Component\Routing\Generator\UrlGenerator;
 
 /**
  * Component providing subscribe/unsubscribe functionality for the bundle.
@@ -37,19 +39,25 @@ class CoreHubComponent extends AbstractHubComponent {
 
     /**
      * Helper to generate callback URLs.
-     * @var UrlGeneratorInterface
+     * @var UrlGenerator
      */
     private $generator = null;
 
     /**
+     * Name of the callback route.
+     * @var string
+     */
+    private $callbackRoute = null;
+
+    /**
      * Standard constructor.
-     * @param UrlGeneratorInterface $generator The helper to generate callback
-     * URLs.
+     * @param Router $router Router containing the callback route.
+     * @param RequestContext $context The context to use for generating URLs.
      * @param string $callbackRoute The route which should be used as a callback
      * for hub requests.
      */
-    public function __construct(UrlGeneratorInterface $generator, $callbackRoute = "pubsubhubbub") {
-        $this->generator = $generator;
+    public function __construct(Router $router, RequestContext $context, $callbackRoute = "pubsubhubbub") {
+        $this->generator = new UrlGenerator($router->getRouteCollection(), $context);
         $this->callbackRoute = $callbackRoute;
     }
 
@@ -62,7 +70,7 @@ class CoreHubComponent extends AbstractHubComponent {
     protected function getCallbackUrl(TopicInterface $topic) {
         return $this->generator->generate($this->callbackRoute, array(
             'topicId' => $topic->getTopicId(),
-        ), true);
+                ), true);
     }
 
     /**

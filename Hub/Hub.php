@@ -131,6 +131,7 @@ class Hub {
 
         // Add the fields to the request
         $curl->postFields = $fields;
+        print_r($fields);
 
         // Execute it
         $response = $curl->exec();

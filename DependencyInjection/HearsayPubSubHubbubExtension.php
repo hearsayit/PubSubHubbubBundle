@@ -47,7 +47,7 @@ class HearsayPubSubHubbubExtension extends Extension {
         $configuration = new Configuration();
         $config = $processor->processConfiguration($configuration, $configs);
         $loader->load('hub.xml');
- 
+
         // Set the hub URL
         $container->setParameter('hearsay_pubsubhubbub.hub_url', $config['hub']);
 
@@ -56,10 +56,11 @@ class HearsayPubSubHubbubExtension extends Extension {
 
         $extensions = array();
 
-        // Set the extensions to use
-        if ($config['core']) {
-            $extensions[] = new Reference('hearsay_pubsubhubbub.core_component');
-        }
+        // We always use the core component
+        $extensions[] = new Reference('hearsay_pubsubhubbub.core_component');
+        $container->setParameter('hearsay_pubsubhubbub.host', $config['core']['host']);
+        $container->setParameter('hearsay_pubsubhubbub.base_url', $config['core']['base_url']);
+        $container->setParameter('hearsay_pubsubhubbub.scheme', $config['core']['scheme']);
 
         // Add the superfeedr component if it's been configured
         if (isset($config['superfeedr'])) {
@@ -86,4 +87,5 @@ class HearsayPubSubHubbubExtension extends Extension {
             $container->setAlias('hearsay_pubsubhubbub.topic_provider', 'hearsay_pubsubhubbub.doctrine_topic_provider');
         }
     }
+
 }

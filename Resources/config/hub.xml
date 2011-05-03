@@ -22,6 +22,9 @@
 
     <parameters>
         <parameter key="hearsay_pubsubhubbub.callback_route" type="string">pubsubhubbub</parameter>
+        <parameter key="hearsay_pubsubhubbub.host" type="string">localhost</parameter>
+        <parameter key="hearsay_pubsubhubbub.base_url" type="string"></parameter>
+        <parameter key="hearsay_pubsubhubbub.scheme" type="string">http</parameter>
         <parameter key="hearsay_pubsubhubbub.hub_url" type="string"></parameter>
         <parameter key="hearsay_pubsubhubbub.superfeedr_username" type="string"></parameter>
         <parameter key="hearsay_pubsubhubbub.superfeedr_password" type="string"></parameter>
@@ -61,7 +64,17 @@
             class="Hearsay\PubSubHubbubBundle\Hub\CoreHubComponent"
             public="false">
             <argument type="service" id="router" />
+            <argument type="service" id="hearsay_pubsubhubbub.request_context" />
             <argument type="string">%hearsay_pubsubhubbub.callback_route%</argument>
+        </service>
+        <service
+            id="hearsay_pubsubhubbub.request_context"
+            class="Symfony\Component\Routing\RequestContext"
+            public="false" >
+            <argument type="string">%hearsay_pubsubhubbub.base_url%</argument>
+            <argument type="string">get</argument>
+            <argument type="string">%hearsay_pubsubhubbub.host%</argument>
+            <argument type="string">%hearsay_pubsubhubbub.scheme%</argument>
         </service>
 
         <!-- Superfeedr hub component -->
