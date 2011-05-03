@@ -57,6 +57,7 @@ class CallbackController {
      * @param TopicProviderInterface $topicProvider
      * @param NotificationHandlerInterface $notificationHandler
      * @param Container $container
+     * @param Logger $logger
      */
     public function __construct(TopicProviderInterface $topicProvider, NotificationHandlerInterface $notificationHandler, Container $container, Logger $logger) {
         $this->topicProvider = $topicProvider;
@@ -161,7 +162,7 @@ class CallbackController {
             $this->getNotificationHandler()->handle($topic, $contentType, $content);
 
             // TODO: X-On-Behalf-Of support
-            return new Response("", 200);
+            return new Response('Notification received!', 200);
         }
     }
 
