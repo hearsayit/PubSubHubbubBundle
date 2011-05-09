@@ -130,6 +130,9 @@ class CallbackController {
                 return new Response('', 404);
             }
         } else {
+	    $this->getLogger()->debug('Received push notification for topic ' .
+		    $topic->getTopicId() . ' (' . $topic->getTopicUrl() . ')');
+
             // Otherwise, this is a push notification
             $content = $this->getRequest()->getContent();
 
