@@ -64,7 +64,7 @@ class CurlTest extends \PHPUnit_Framework_TestCase {
 
         // If something happened, (which it shouldn't) throw an exception
         if (!$curl)
-            throw new Exception("I couldn't create a Curl object. Was PHP compiled with cURL?");
+            throw new \Exception("I couldn't create a Curl object. Was PHP compiled with cURL?");
 
         /**
          * Set the URL for $curl to our test location:
@@ -83,7 +83,7 @@ class CurlTest extends \PHPUnit_Framework_TestCase {
 
         // If there's no response, there was an error.
         if (!$response)
-            throw new Exception("I couldn't fetch the response.");
+            throw new \Exception("I couldn't fetch the response.");
     }
 
 }
