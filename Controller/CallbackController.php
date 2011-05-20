@@ -115,12 +115,21 @@ class CallbackController {
             // This is a verification of a subscribe/unsubscribe request
             if (
                     ($mode == 'subscribe' && $topic->isSubscribeAllowed()) ||
-                    ($mode == 'unsubscribe' && $topic->isUnsubscribeAllowed())) {
+                    ($mode == 'unsubscribe' && ($topic === null || $topic->isUnsubscribeAllowed()))) {
 
-                // The request is allowed
-                $this->getLogger()->debug('Allowing ' . $mode .
-                        ' request for topic ' . $topic->getTopicId() . ' (' .
-                        $topic->getTopicUrl() . ')');
+                /* The request is allowed.  Note that we allow unsubscribe
+                 * requests if we don't recognize the topic; this allows us to
+                 * e.g. delete a topic from the database but still unsubscribe
+                 * from it.
+                 */
+                if ($topic !== null) {
+                    $this->getLogger()->debug('Allowing ' . $mode .
+                            ' request for topic ' . $topic->getTopicId() . ' (' .
+                            $topic->getTopicUrl() . ')');
+                } else {
+                    $this->getLogger()->debug('Allowing ' . $mode .
+                            ' request for unrecognized topic ID ' . $topicId);
+                }
                 return new Response($get->get("hub_challenge"), 200);
             } else {
                 // The request is not allowed
@@ -130,8 +139,8 @@ class CallbackController {
                 return new Response('', 404);
             }
         } else {
-	    $this->getLogger()->debug('Received push notification for topic ' .
-		    $topic->getTopicId() . ' (' . $topic->getTopicUrl() . ')');
+            $this->getLogger()->debug('Received push notification for topic ' .
+                    $topic->getTopicId() . ' (' . $topic->getTopicUrl() . ')');
 
             // Otherwise, this is a push notification
             $content = $this->getRequest()->getContent();

@@ -90,6 +90,9 @@ class CallbackControllerTest extends \PHPUnit_Framework_TestCase {
                 ->expects($this->any())
                 ->method("getTopicId")
                 ->will($this->returnValue($this->identifier));
+        
+        // Fix to force detection of mocked methods
+        $this->topicProvider->getTopic($this->identifier);
     }
 
     /**
@@ -221,6 +224,32 @@ class CallbackControllerTest extends \PHPUnit_Framework_TestCase {
         $controller = new CallbackController($this->topicProvider, $this->notificationHandler, $this->getContainer($request), $this->logger);
         $response = $controller->callbackAction($this->identifier);
 
+        // And we should be successful
+        $this->assertTrue($response->isSuccessful());
+        $this->assertEquals('print_this', $response->getContent());
+    }
+    
+    public function testUnknownTopicUnsubscribes() {
+        $request = Request::create('/pubsubhubbub?hub.mode=unsubscribe&' .
+                'hub.topic=http://rss.topic.com&' .
+                'hub.challenge=print_this');
+        
+        // Mock provider will not find a topic with our ID
+        $provider = $this->getMock('Hearsay\PubSubHubbubBundle\Topic\TopicProviderInterface');
+        $provider
+                ->expects($this->once())
+                ->method('getTopic')
+                ->with('unknown-id')
+                ->will($this->returnValue(null));
+        
+        // We shouldn't receive a notification
+        $this->notificationHandler
+                ->expects($this->never())
+                ->method('handle');
+       
+        $controller = new CallbackController($provider, $this->notificationHandler, $this->getContainer($request), $this->logger);
+        $response = $controller->callbackAction('unknown-id');
+        
         // And we should be successful
         $this->assertTrue($response->isSuccessful());
         $this->assertEquals('print_this', $response->getContent());
