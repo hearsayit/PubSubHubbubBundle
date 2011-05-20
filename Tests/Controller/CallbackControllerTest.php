@@ -229,6 +229,11 @@ class CallbackControllerTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals('print_this', $response->getContent());
     }
     
+    /**
+     * Make sure that we allow unsubscribe requests for topics which we don't
+     * recognize.
+     * @covers Hearsay\PubSubHubbubBundle\Controller\CallbackController
+     */
     public function testUnknownTopicUnsubscribes() {
         $request = Request::create('/pubsubhubbub?hub.mode=unsubscribe&' .
                 'hub.topic=http://rss.topic.com&' .
