@@ -58,15 +58,18 @@ class HearsayPubSubHubbubExtension extends Extension {
 
         // We always use the core component
         $extensions[] = new Reference('hearsay_pubsubhubbub.core_component');
-        $container->setParameter('hearsay_pubsubhubbub.host', $config['core']['host']);
-        $container->setParameter('hearsay_pubsubhubbub.base_url', $config['core']['base_url']);
-        $container->setParameter('hearsay_pubsubhubbub.scheme', $config['core']['scheme']);
+        $container->setParameter('hearsay_pubsubhubbub.host', $config['callback']['host']);
+        $container->setParameter('hearsay_pubsubhubbub.base_url', $config['callback']['base_url']);
+        $container->setParameter('hearsay_pubsubhubbub.scheme', $config['callback']['scheme']);
 
         // Add the superfeedr component if it's been configured
         if (isset($config['superfeedr'])) {
             $container->setParameter('hearsay_pubsubhubbub.superfeedr_username', $config['superfeedr']['username']);
             $container->setParameter('hearsay_pubsubhubbub.superfeedr_password', $config['superfeedr']['password']);
-
+            
+            $definition = $container->getDefinition('hearsay_pubsubhubbub.superfeedr_component');
+            $definition->addArgument($config['superfeedr']['digest']);
+            
             $extensions[] = new Reference('hearsay_pubsubhubbub.superfeedr_component');
         }
 
@@ -77,14 +80,19 @@ class HearsayPubSubHubbubExtension extends Extension {
 
         // Set up the provider
         if (isset($config['provider']['service'])) {
+            // Custom service
             $container->setAlias('hearsay_pubsubhubbub.topic_provider', $config['provider']['service']);
         } else if (isset($config['provider']['doctrine'])) {
+            // Doctrine provider
             $doctrineConfig = $config['provider']['doctrine'];
             $definition = $container->getDefinition('hearsay_pubsubhubbub.doctrine_topic_provider');
-            $definition->addArgument(new Reference($doctrineConfig['manager']));
+            $definition->addArgument(new Reference('doctrine.orm.' . $doctrineConfig['manager'] . '_entity_manager'));
             $definition->addArgument($doctrineConfig['entity']);
             $definition->addArgument($doctrineConfig['property']);
             $container->setAlias('hearsay_pubsubhubbub.topic_provider', 'hearsay_pubsubhubbub.doctrine_topic_provider');
+        } else {
+            // Debugging provider
+            $container->setAlias('hearsay_pubsubhubbub.topic_provider', 'hearsay_pubsubhubbub.basic_topic_provider');
         }
     }
 

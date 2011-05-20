@@ -1,5 +1,5 @@
 This is a Symfony2 bundle which helps your application act as a subscriber to
-a PubSubHubbub hub.  Supports 
+a PubSubHubbub hub.  Supports subscription via Superfeedr.
 
 Installation
 ============
@@ -38,27 +38,41 @@ Add the bundle to your kernel.
         );
     }
 
-Configure the bundle.
----------------------
+Add the bundle routes.
+----------------------
 
-The minimal configuration just takes a hub URL:
+    # app/config/routing.yml
+
+    # ...
+    _pubsubhubbub:
+        resource: @HearsayPubSubHubbubBundle/Resources/config/routing.yml
+
+Configuration
+=============
+
+Set up a hub connection.
+------------------------
+
+The minimal configuration takes a hub URL and a callback specification:
 
     hearsay_pub_sub_hubbub:
         hub:           http://hub.com
+        callback:    
+            host:      your.app.com              # Must be explicitly specified
+            base_url:  /your_app_subdirectory    # Defaults to empty
+            scheme:    https                     # Defaults to http
 
-You'll likely also want to configure your callback URL, since this can't be
-reliably determined when e.g. subscribing from the command line:
+The callback configuration is required to allow for consistent callback URLs no
+matter how you subscribe to feeds (from the command line, from a web interface,
+etc.).
 
-    hearsay_pub_sub_hubbub:
-        # ...
-        core:
-            host:      your.app.com
-            base_url:  /your_app_subdirectory
-            scheme:    http
+Tell the bundle which topics it's allowed to subscribe to.
+----------------------------------------------------------
 
 You can specify a service implementing `Hearsay\PubSubHubbubBundle\Topic\TopicProviderInterface`
-to control your allowed topic subscriptions (the default provider allows subscriptions to
-or unsubscriptions from any topic URL, so it's not at all secure):
+to control your allowed topic subscriptions (the default provider allows 
+subscriptions to or unsubscriptions from any topic URL, so it's useful for 
+testing but not at all secure):
 
     hearsay_pub_sub_hubbub:
         # ...
@@ -81,6 +95,9 @@ onPushNotificationReceived events):
         # ...
         handler:      your_handler_service
 
+Add your Superfeedr credentials if necessary.
+---------------------------------------------
+
 Connecting to the Superfeedr hub requires some additional information:
 
     hearsay_pub_sub_hubbub:
@@ -89,6 +106,9 @@ Connecting to the Superfeedr hub requires some additional information:
             username: superfeedr_username
             password: superfeedr_password
             digest:   true      # Whether to receive daily digest notifications (false by default)
+
+Start receiving push notifications!
+===================================
 
 Subscribe to topics.
 --------------------

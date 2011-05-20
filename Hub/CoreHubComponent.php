@@ -56,7 +56,7 @@ class CoreHubComponent extends AbstractHubComponent {
      * @param string $callbackRoute The route which should be used as a callback
      * for hub requests.
      */
-    public function __construct(Router $router, RequestContext $context, $callbackRoute = "pubsubhubbub") {
+    public function __construct(Router $router, RequestContext $context, $callbackRoute = 'pubsubhubbub') {
         $this->generator = new UrlGenerator($router->getRouteCollection(), $context);
         $this->callbackRoute = $callbackRoute;
     }
@@ -77,9 +77,9 @@ class CoreHubComponent extends AbstractHubComponent {
      * {@inheritdoc}
      */
     public function getOptions(Hub $hub, $mode) {
-        if ($mode == "subscribe" || $mode == "unsubscribe") {
+        if ($mode == 'subscribe' || $mode == 'unsubscribe') {
             return array(
-                "topic" => null,
+                'topic' => null,
             );
         } else {
             return parent::getOptions($hub, $mode);
@@ -91,7 +91,7 @@ class CoreHubComponent extends AbstractHubComponent {
      */
     public function getParameters(Hub $hub, $mode, array $options) {
         // We only know how to process subscription requests
-        if ($mode == "subscribe" || $mode == "unsubscribe") {
+        if ($mode == 'subscribe' || $mode == 'unsubscribe') {
             $topic = $options["topic"];
             if (!($topic instanceof TopicInterface)) {
                 throw new BadOptionException('Core hub component requires an ' .
@@ -99,17 +99,17 @@ class CoreHubComponent extends AbstractHubComponent {
                         'as the "topic" option for subscription requests.');
             } else {
                 $fields = array(
-                    "hub.verify" => "sync",
-                    "hub.topic" => $topic->getTopicUrl(),
-                    "hub.callback" => $this->getCallbackUrl($topic),
+                    'hub.verify' => 'sync',
+                    'hub.topic' => $topic->getTopicUrl(),
+                    'hub.callback' => $this->getCallbackUrl($topic),
                 );
 
                 $secret = $topic->getTopicSecret();
                 if ($secret) {
                     // Must connect securely to use a topic secret
                     $scheme = \parse_url($hub->getUrl(), \PHP_URL_SCHEME);
-                    if ($scheme === "https") {
-                        $fields["hub.secret"] = $secret;
+                    if ($scheme === 'https') {
+                        $fields['hub.secret'] = $secret;
                     } else {
                         throw new SecurityException("Hub secret values may only be sent over a secure connection.");
                     }

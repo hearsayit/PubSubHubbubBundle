@@ -57,6 +57,12 @@
             public="false" >
             <!-- Arguments added in extension code -->
         </service>
+        
+        <!-- Debugging topic provider -->
+        <service
+            id="hearsay_pubsubhubbub.basic_topic_provider"
+            class="Hearsay\PubSubHubbubBundle\Topic\BasicTopicProvider"
+            public="false" />
 
         <!-- Core hub component -->
         <service
@@ -84,6 +90,7 @@
             public="false">
             <argument type="string">%hearsay_pubsubhubbub.superfeedr_username%</argument>
             <argument type="string">%hearsay_pubsubhubbub.superfeedr_password%</argument>
+            <!-- Digest argument added directly in extension code -->
         </service>
 
         <!-- Default event handler -->

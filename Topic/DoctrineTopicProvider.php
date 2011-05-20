@@ -55,7 +55,7 @@ class DoctrineTopicProvider implements TopicProviderInterface {
      * @param string $topicIdProperty The property on topic entities which is
      * used as their unique identifier.
      */
-    public function __construct(EntityManager $entityManager, $topicClass, $topicIdProperty = 'id') {
+    public function __construct(EntityManager $entityManager, $topicClass, $topicIdProperty = null) {
         $this->entityManager = $entityManager;
         $this->topicClass = $topicClass;
         $this->topicIdProperty = $topicIdProperty;
@@ -91,9 +91,18 @@ class DoctrineTopicProvider implements TopicProviderInterface {
      */
     public function getTopic($topicId) {
         $repo = $this->getEntityManager()->getRepository($this->getTopicClass());
-        $results = $repo->findBy(array(
-                    $this->getTopicIdProperty() => $topicId,
-                ));
+        if ($this->getTopicIdProperty() === null) {
+            // By default, just use the object's primary key
+            $results = array(
+                $repo->find($topicId),
+            );
+        } else {
+            // If a property has been explicitly specified, use it to search
+            $results = $repo->findBy(array(
+                        $this->getTopicIdProperty() => $topicId,
+                    ));
+        }
+        
         if (\count($results) > 1) {
             throw new NonUniqueIdException('Multiple topics found with id: ' . $topicId);
         } else if (\count($results) === 0) {
