@@ -25,7 +25,7 @@ use Hearsay\PubSubHubbubBundle\Topic\TopicProviderInterface;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Bundle\MonologBundle\Logger\Logger;
+use Symfony\Bridge\Monolog\Logger;
 
 /**
  * Controller service to handle requests from PubSubHubbub hubs.

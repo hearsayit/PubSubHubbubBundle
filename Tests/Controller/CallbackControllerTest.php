@@ -45,7 +45,7 @@ class CallbackControllerTest extends \PHPUnit_Framework_TestCase {
     protected $notificationHandler = null;
     /**
      * Mock logger, initialized for each test.
-     * @var \Symfony\Bundle\MonologBundle\Logger\Logger
+     * @var \Symfony\Bridge\Monolog\Logger
      */
     protected $logger = null;
     /**
@@ -77,7 +77,7 @@ class CallbackControllerTest extends \PHPUnit_Framework_TestCase {
     protected function setUp() {
         $this->topicProvider = $this->getMock('Hearsay\PubSubHubbubBundle\Topic\TopicProviderInterface');
         $this->notificationHandler = $this->getMock('Hearsay\PubSubHubbubBundle\Handler\NotificationHandlerInterface');
-        $this->logger = $this->getMockBuilder('Symfony\Bundle\MonologBundle\Logger\Logger')
+        $this->logger = $this->getMockBuilder('Symfony\Bridge\Monolog\Logger')
                         ->disableOriginalConstructor()
                         ->getMock();
         $this->topic = $this->getMock('Hearsay\PubSubHubbubBundle\Topic\TopicInterface');
