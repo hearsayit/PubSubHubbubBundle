@@ -94,6 +94,13 @@ class HearsayPubSubHubbubExtension extends Extension {
             // Debugging provider
             $container->setAlias('hearsay_pubsubhubbub.topic_provider', 'hearsay_pubsubhubbub.basic_topic_provider');
         }
+        
+        // Set up the subscriber
+        if ($config['test']) {
+            $container->setAlias('hearsay_pubsubhubbub.hub_subscriber', 'hearsay_pubsubhubbub.dummy_hub_subscriber');
+        } else {
+            $container->setAlias('hearsay_pubsubhubbub.hub_subscriber', 'hearsay_pubsubhubbub.live_hub_subscriber');
+        }
     }
 
 }

@@ -30,7 +30,7 @@ use Hearsay\PubSubHubbubBundle\Topic\TopicInterface;
  * @subpackage Hub
  * @author Kevin Montag <kevin@hearsay.it>
  */
-class HubSubscriber {
+class HubSubscriber implements HubSubscriberInterface {
 
     /**
      * The hub we're subscribing/unsubscribing from.
@@ -83,22 +83,14 @@ class HubSubscriber {
     }
 
     /**
-     * Subscribe to the given topic.
-     * @param TopicInterface $topic The topic.
-     * @param array $options Any additional options to provide to the request.
-     * @return string The server's response.
-     * @throws SubscriptionNotVerifiedException
+     * {@inheritdoc}
      */
     public function subscribe(TopicInterface $topic, array $options = array()) {
         return $this->makeSubscriptionRequest('subscribe', $topic, $options);
     }
 
     /**
-     * Unsubscribe from the given topic.
-     * @param TopicInterface $topic The topic.
-     * @param array $options Any additional options to provide to the request.
-     * @return string The server's response.
-     * @throws SubscriptionNotVerifiedException
+     * {@inheritdoc}
      */
     public function unsubscribe(TopicInterface $topic, array $options = array()) {
         return $this->makeSubscriptionRequest('unsubscribe', $topic, $options);

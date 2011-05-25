@@ -103,10 +103,15 @@
 
         <!-- Subscription helper -->
         <service
-            id="hearsay_pubsubhubbub.hub_subscriber"
-            class="Hearsay\PubSubHubbubBundle\Hub\HubSubscriber" >
+            id="hearsay_pubsubhubbub.live_hub_subscriber"
+            class="Hearsay\PubSubHubbubBundle\Hub\HubSubscriber" 
+            public="false" >
             <argument type="service" id="hearsay_pubsubhubbub.hub" />
         </service>
+        <service
+            id="hearsay_pubsubhubbub.dummy_hub_subscriber"
+            class="Hearsay\PubSubHubbubBundle\Test\DummyHubSubscriber"
+            public="false" />
 
         <!-- Request factory -->
         <service
