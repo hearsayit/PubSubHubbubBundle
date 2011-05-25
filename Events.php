@@ -29,8 +29,24 @@ final class Events {
     /**
      * The onNotificationReceived event occurs when a push notification is
      * received from a PubSubHubbub hub.  Listeners receive an instance of
-     * Hearsay\PubSubHubbubBundle\Event\NotificationReceivedEvent.
+     * <code>Hearsay\PubSubHubbubBundle\Event\NotificationReceivedEvent</code>.
      * @var string
      */
-    const onPushNotificationReceived = "onPushNotificationReceived";
+    const onPushNotificationReceived = 'onPushNotificationReceived';
+
+    /**
+     * The onTestSubscribeRequest event occurs when a subscription request is
+     * received by the dummy hub subscriber, e.g. in a test environment.
+     * Listeners receive an instance of
+     * <code>Hearsay\PubSubHubbubBundle\Event\SubscriptionEvent</code>.
+     */
+    const onTestSubscribeRequest = 'onTestSubscribeRequest';
+
+    /**
+     * The onTestUnsubscribeRequest event when an unsubscribe request is
+     * received by the dummy hub subscriber, e.g. in a test environment.
+     * Listeners receive an instance of
+     * <code>Hearsay\PubSubHubbubBundle\Event\SubscriptionEvent</code>.
+     */
+    const onTestUnsubscribeRequest = 'onTestUnsubscribeRequest';
 }

@@ -20,20 +20,49 @@
 
 namespace Hearsay\PubSubHubbubBundle\Test;
 
+use Hearsay\PubSubHubbubBundle\Events;
+use Hearsay\PubSubHubbubBundle\Event\SubscriptionEvent;
 use Hearsay\PubSubHubbubBundle\Hub\HubSubscriberInterface;
 use Hearsay\PubSubHubbubBundle\Topic\TopicInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
- * A hub subscriber implementation which doesn't actually do anything.  Useful
- * for test environments where it is desirable to suppress actual subscriptions.
+ * A hub subscriber implementation which just dispatches events when it is told
+ * to subscribe or unsubscribe.  Useful for test environments where it is 
+ * desirable to suppress actual subscriptions.
  * @author Kevin Montag <kevin@hearsay.it>
  */
 class DummyHubSubscriber implements HubSubscriberInterface {
 
     /**
+     * The event dispatcher.
+     * @var EventDispatcherInterface
+     */
+    private $dispatcher = null;
+
+    /**
+     * Standard constructor.
+     * @param EventDispatcherInterface $dispatcher Dispatcher to use for sending
+     * subscribe and unsubscribe events.
+     */
+    public function __construct(EventDispatcherInterface $dispatcher) {
+        $this->dispatcher = $dispatcher;
+    }
+
+    /**
+     * Get the dispatcher to use for sending subscribe and unsubscribe events.
+     * @return EventDispatcherInterface The dispatcher.
+     */
+    protected function getEventDispatcher() {
+        return $this->dispatcher;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function subscribe(TopicInterface $topic, array $options = array()) {
+        $event = new SubscriptionEvent($topic, $options);
+        $this->getEventDispatcher()->dispatch(Events::onTestSubscribeRequest, $event);
         return '';
     }
 
@@ -41,6 +70,8 @@ class DummyHubSubscriber implements HubSubscriberInterface {
      * {@inheritdoc}
      */
     public function unsubscribe(TopicInterface $topic, array $options = array()) {
+        $event = new SubscriptionEvent($topic, $options);
+        $this->getEventDispatcher()->dispatch(Events::onTestUnsubscribeRequest, $event);
         return '';
     }
 

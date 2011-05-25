@@ -111,7 +111,9 @@
         <service
             id="hearsay_pubsubhubbub.dummy_hub_subscriber"
             class="Hearsay\PubSubHubbubBundle\Test\DummyHubSubscriber"
-            public="false" />
+            public="false">
+            <argument type="service" id="event_dispatcher" />
+        </service>
 
         <!-- Request factory -->
         <service
