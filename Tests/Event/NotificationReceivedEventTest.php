@@ -30,7 +30,7 @@ class NotificationReceivedEventTest extends \PHPUnit_Framework_TestCase {
 
     /**
      * Simple test to make sure the constructor appropriately stores info.
-     * @covers Hearsay\PubSubHubbubBundle\Event\NoficationReceivedEvent
+     * @covers Hearsay\PubSubHubbubBundle\Event\NotificationReceivedEvent
      */
     public function testDataStored() {
         $topic = $this->getMock('Hearsay\PubSubHubbubBundle\Topic\TopicInterface');
