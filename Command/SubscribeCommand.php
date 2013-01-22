@@ -5,7 +5,7 @@
 
 namespace Hearsay\PubSubHubbubBundle\Command;
 
-use Symfony\Bundle\FrameworkBundle\Command\Command;
+use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -15,7 +15,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  * Command to subscribe or unsubscribe from a topic on a PubSubHubbub hub.
  * @author Kevin Montag
  */
-class SubscribeCommand extends Command {
+class SubscribeCommand extends ContainerAwareCommand {
 
     /**
      * {@inheritdoc}
