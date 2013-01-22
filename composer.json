@@ -1,5 +1,5 @@
 {
-    "name": "hearsayit/pubsubhubbub-bundle",
+    "name": "hearsay/pubsubhubbub-bundle",
     "type": "library",
     "description": "A Symfony PubSubHubbub bundle",
     "keywords": ["pubsubhubbub", "bundle", "symfony"],
@@ -16,7 +16,7 @@
         "symfony/framework-bundle": ">=2.1.0"
     },
     "autoload": {
-        "psr-0": { "Hearsayit\\PubSubHubbubBundle": "" }
+        "psr-0": { "Hearsay\\PubSubHubbubBundle": "" }
     },
-    "target-dir": "Hearsayit/PubSubHubbubBundle"
+    "target-dir": "Hearsay/PubSubHubbubBundle"
 }
