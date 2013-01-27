@@ -1,0 +1,22 @@
+{
+    "name": "hearsay/pubsubhubbub-bundle",
+    "type": "library",
+    "description": "A Symfony PubSubHubbub bundle",
+    "keywords": ["pubsubhubbub", "bundle", "symfony"],
+    "homepage": "http://github.com/kayue/PubSubHubbubBundle",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Hearsay",
+            "email": "unkown@example.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.3",
+        "symfony/framework-bundle": ">=2.1.0"
+    },
+    "autoload": {
+        "psr-0": { "Hearsay\\PubSubHubbubBundle": "" }
+    },
+    "target-dir": "Hearsay/PubSubHubbubBundle"
+}
